@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/solid.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/fontawesome.css">
+    <link rel="stylesheet" href="https://unpkg.com/mustard-ui@latest/dist/css/mustard-ui.min.css"> 
+    <!-- <link rel="stylesheet" href="https://fonts.gstatic.com/s/materialicons/v32/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2"> -->
+    <link rel="stylesheet" href="material-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+</head>
+<body>
+    
+        <section class = "container w-container">
+
+        <div >
+        <label1 >Приоритет: </label1> 
+        <select name="prioritet" id="prioritet" >
+            <option value="low">низкий</option>
+            <option value="middle">средний</option>
+            <option value="high">высокий</option>
+        </select>
+
+        <input type="text" id = "new-task" placeholder = "Введите текст...">
+        <button id = "add">Добавить задачу</button>
+    </div>
+
+
+        
+        <form id = "middle">
+        
+        <label class = "label1">Фильтр по приоритету: </label> &nbsp;
+
+        <select name="filtr" id="filtr">
+            <option value="any">любой</option> 
+            <option value="low">низкий</option>
+            <option value="middle">средний</option>
+            <option value="high">высокий</option>  
+        </select>
+
+        <label class = "label2">Фильтр по статусу: </label> &nbsp;
+        активные <input type="checkbox" name = "active" value = "активные">
+        отмененные <input type="checkbox" name = "canceled" value = "отмененные">      
+        завершенные <input type="checkbox" name = "completed" value = "завершенные">
+
+        <br>
+        <label class = "label3">Сортировка по дате: </label> &nbsp;
+        <select name="sortData" id="sortData">
+            <option value="up1">дата создания &uarr;</option>
+            <option value="down1">дата создания &darr;</option>
+        </select>
+
+        <label class = "label4">Сортировка по приоритету: </label> &nbsp;
+        <select name="sortPriority" id="sortPriority">
+            <option value="up2">приоритет &uarr;</option>
+            <option value="down2">приоритет &darr;</option>
+        </select>
+
+        <br>
+        <label class = "label5">Поиск задачи то тексту: </label> &nbsp;
+        <input type="text" name = "input2" placeholder = "Начните вводить текст задачи...">
+        </form>
+
+
+
+
+        <div class = "lower" id = "lowerid" style="overflow-y: scroll">
+            <ul id ="unfinished-tasks">
+                <!-- <li>
+                    <label>123</label>
+                    <input type ="text">
+                    <button class ="material-icons checkbox">
+                        <i class ="material-icons">check_box_outline_blank</i>
+                    </button>
+                    <button class ="material-icons edit" >
+                        <i class ="material-icons edit">edit</i>
+                    </button>
+                    <button class ="material-icons delete">
+                        <i class ="material-icons delete">delete</i>
+                    </button>
+                </li>
+
+                <li class = "editMode">
+                    <label>123</label>
+                    <input type ="text" value="123">
+                    <button class ="material-icons checkbox">
+                        <i class ="material-icons">check_box_outline_blank</i>
+                    </button>
+                    <button class ="material-icons save" >
+                        <i class ="material-icons save">save</i>
+                    </button>
+                    <button class ="material-icons delete">
+                        <i class ="material-icons delete">delete</i>
+                    </button>
+                </li> -->
+            </ul>
+        </div>
+    </section>
+<script src="index.js"> </script>
+
+</body>
+</html>    
