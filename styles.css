@@ -119,10 +119,16 @@ body {
     height: 300px;
     margin: 10px auto;
     border: 1px solid #ccc;
-    display: inline-block;   
-
+    display: inline-block;
 }
+
+/*.unfinished-tasks.hide {*/
+/*    display:none;*/
+/*}*/
 ::-webkit-scrollbar{
-  width: 15px
-  back
-};
+  width: 15px;
+  back;
+}
+.unf-tasks.hide {
+    display: none;
+}
