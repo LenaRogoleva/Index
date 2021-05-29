@@ -88,7 +88,8 @@ function deleteTask(){
 
 document.querySelector('#input2').oninput = function searchTask(){
     let val = this.value.trim(); //получаем значение, которое пользователь вводит внутрь функции, еще обрезаем пробелы у вводимых данных
-    let elasticItems = document.querySelectorAll(unfinishedTasks.innerHTML); //получаем элементы, откуда получаются данные
+    //let elasticItems = document.querySelectorAll(unfinishedTasks.innerHTML); //получаем элементы, откуда получаются данные
+    let elasticItems = unfinishedTasks.innerHTML;
     console.log(elasticItems)
     // if (val != '') {
     //     elasticItems.forEach(function (elem){ //перебираем все задачи
