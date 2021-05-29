@@ -87,17 +87,19 @@ function deleteTask(){
     }}
 
 document.querySelector('#input2').oninput = function searchTask(){
-    let val = this.value.trim();
-    if (val != '') {
-        unfinishedTasks.forEach(function (elem){
-            if (elem.innerText.search(val) ==-1){
-                elem.classList.add('hide');
-            }
-            else {
-                elem.classList.remove('hide')
-            }
-        })
-    }}
+    let val = this.value.trim(); //получаем значение, которое пользователь вводит внутрь функции, еще обрезаем пробелы у вводимых данных
+    let elasticItems = document.querySelectorAll(unfinishedTasks.innerHTML); //получаем элементы, откуда получаются данные
+    console.log(elasticItems)
+    // if (val != '') {
+    //     elasticItems.forEach(function (elem){ //перебираем все задачи
+    //         if (elem.innerText.search(val) ==-1){ //если внутри задач нет совпадений (search возвращает номер подстроки в строке, если есть, то возвращает номер, если нет, то -1)
+    //             elem.classList.add('hide'); //то скрываем, добавляя в css классу unf-tasks display:none
+    //         }
+    //         else {
+    //             elem.classList.remove('hide')
+    //         }
+    //     })
+    }
 
 
 
