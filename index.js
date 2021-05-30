@@ -8,6 +8,7 @@ const label = document.createElement('label');
 const priority = document.getElementById('prioritet');
 //todo для id всё же лучше использовать counter
 let counter = 0;
+let prior;
 
 function addTask() {
     if (inputTask.value === "") {
@@ -24,36 +25,6 @@ function addTask() {
     toDoArr.unshift(toDo)
 }
 
-
-function set() {
-
-    inputTask.value = "";//обнулим значение строки
-    let displayTask = '';
-    // let task = document.createElement('li')
-    // task.id = toDoArr[0].id
-    // const unfTasks = document.getElementById('unfinished-tasks')
-    // const a = document.getElementById('${item.id}')
-    // unfTasks.removeChild(a)
-    toDoArr.forEach(item => { //выводим элементы
-        swap(item);
-        //todo привязываем контекст через this
-        displayTask += `<li id ="${item.id}" class="tasks">${prior}
-        <label>${item.name}</label>
-        <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
-        </li>`;
-        unfinishedTasks.innerHTML = displayTask;
-    })
-
-
-}
-
-addButton.addEventListener('click', function () {
-    addTask();
-    set();
-});
-
-
 function swap(item) {
     if (item.prior === 'low') {
         //todo объяви уже этот prior где-нибудь :)
@@ -66,21 +37,46 @@ function swap(item) {
     return prior
 }
 
+function set() {
+
+    inputTask.value = "";//обнулим значение строки
+    let displayTask = '';
+
+    toDoArr.forEach(item => { //выводим элементы
+        swap(item);
+        //todo привязываем контекст через this
+        displayTask += `<li id ="${item.id}" class="tasks">${prior}
+        <label>${item.name}</label>
+        <label>${item.time}</label>
+        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        </li>`;
+        unfinishedTasks.innerHTML = displayTask;
+    })
+}
+
+addButton.addEventListener('click', function () {
+    addTask();
+    set();
+});
+
+
 //todo т.к. у тебя логика немного отличается от например Викиной, т.е. ты вяжешь событие напрямую через шаблон,
 // то придётся идти на небольшие ухищрения, у i задаём id, пробрасываем контекст элемента и уже в нём получаем id
 // можешь открыть консоль и сама посмотреть
 function deleteTask(item) {
     console.log(item);
-    let toDoArrDelete = toDoArr.slice(0); //копируем элементы в новый массивы
-    const deleteIndex = toDoArr.findIndex((item) => item.id === item.id);
-    toDoArr.splice(deleteIndex, 1);
-    toDoArrDelete.forEach(i => {
-        // if (event.target.closest('.delete')) {
-        //         // if ($('<i class ="material-icons delete">delete</i>').index(event.target)
-        toDoArr.splice(i, 1)
-    }); //начиная с i позиции удаляем 1 элемент
-    //     }
-    let displayTask = '';
+    // let toDoArrDelete = toDoArr.slice(0); //копируем элементы в новый массивы
+    const deleteIndex = toDoArr.findIndex((toDo) => toDo.id === '<i id="${item.id}">delete</i>');
+    // // toDoArr.splice(deleteIndex-1, 1); //todo работает, когда иду из середины, не важно в каком порядке
+    toDoArr.splice(deleteIndex+0,1); //todo работает, когда иду от первой задачи к последующим последовательно
+    console.log(toDoArr)
+    set();
+
+
+    // toDoArrDelete.forEach(i => {
+    //     toDoArr.splice(i, 1)
+    // });
+    // let displayTask = '';
 
     if (toDoArr.length === 0) unfinishedTasks.innerHTML = '' //если массив пустой, то удаляем и из визуала
 }
