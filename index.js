@@ -2,8 +2,7 @@ const addButton = document.getElementById('add');
 const inputTask = document.getElementById('new-task');
 const unfinishedTasks = document.getElementById('unfinished-tasks');
 const toDoArr = [];
-const toDoArrDelete = [];
-let todoArrFiltered = [];
+let toDoArrFiltered = [];
 const label = document.createElement('label');
 const priority = document.getElementById('prioritet');
 //todo для id всё же лучше использовать counter
@@ -67,36 +66,31 @@ function deleteTask(item) {
     console.log(item);
     // let toDoArrDelete = toDoArr.slice(0); //копируем элементы в новый массивы
     const deleteIndex = toDoArr.findIndex((toDo) => toDo.id === '<i id="${item.id}">delete</i>');
-    // // toDoArr.splice(deleteIndex-1, 1); //todo работает, когда иду из середины, не важно в каком порядке
+    //toDoArr.splice(deleteIndex-1, 1); //todo работает, когда иду из середины, не важно в каком порядке
     toDoArr.splice(deleteIndex+0,1); //todo работает, когда иду от первой задачи к последующим последовательно
     console.log(toDoArr)
     set();
-
-
-    // toDoArrDelete.forEach(i => {
-    //     toDoArr.splice(i, 1)
-    // });
-    // let displayTask = '';
 
     if (toDoArr.length === 0) unfinishedTasks.innerHTML = '' //если массив пустой, то удаляем и из визуала
 }
 
 document.querySelector('#input2').oninput = function searchTask() {
     let val = this.value.trim(); //получаем значение, которое пользователь вводит внутрь функции, еще обрезаем пробелы у вводимых данных
-    //let elasticItems = document.querySelectorAll(unfinishedTasks.innerHTML); //получаем элементы, откуда получаются данные
-    let elasticItems = unfinishedTasks.innerHTML;
-    console.log(toDoArr);
-    console.log(elasticItems);
-    // if (val != '') {
-    //     elasticItems.forEach(function (elem){ //перебираем все задачи
-    //         if (elem.innerText.search(val) ==-1){ //если внутри задач нет совпадений (search возвращает номер подстроки в строке, если есть, то возвращает номер, если нет, то -1)
-    //             elem.classList.add('hide'); //то скрываем, добавляя в css классу unf-tasks display:none
-    //         }
-    //         else {
-    //             elem.classList.remove('hide')
-    //         }
-    //     })
+    toDoArrFiltered = toDoArr.filter((item) => item.name.includes(val));
+    console.log(toDoArrFiltered);
+    unfinishedTasks.innerHTML = '';
+    for (let i = 0; i < val.length; i++) {
+        toDoArrFiltered.forEach(item => { //выводим элементы
+            swap(item);
+            unfinishedTasks.innerHTML += `<li id ="${item.id}" class="tasks">${prior}
+        <label>${item.name}</label>
+        <label>${item.time}</label>
+        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        </li>`;
+        })
+    }
 }
+
 
 
 // function finishTask () {
