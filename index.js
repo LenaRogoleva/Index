@@ -3,6 +3,7 @@ const inputTask = document.getElementById('new-task');
 const unfinishedTasks = document.getElementById('unfinished-tasks');
 const toDoArr = [];
 let toDoArrFiltered = [];
+let toDoArrDate = [];
 const label = document.createElement('label');
 const priority = document.getElementById('prioritet');
 //todo для id всё же лучше использовать counter
@@ -62,7 +63,7 @@ addButton.addEventListener('click', function () {
 //todo т.к. у тебя логика немного отличается от например Викиной, т.е. ты вяжешь событие напрямую через шаблон,
 // то придётся идти на небольшие ухищрения, у i задаём id, пробрасываем контекст элемента и уже в нём получаем id
 // можешь открыть консоль и сама посмотреть
-function deleteTask(item) {
+function deleteTask(item) { //todo кнопка удаления задачи
     console.log(item);
     // let toDoArrDelete = toDoArr.slice(0); //копируем элементы в новый массивы
     const deleteIndex = toDoArr.findIndex((toDo) => toDo.id === '<i id="${item.id}">delete</i>');
@@ -74,7 +75,7 @@ function deleteTask(item) {
     if (toDoArr.length === 0) unfinishedTasks.innerHTML = '' //если массив пустой, то удаляем и из визуала
 }
 
-document.querySelector('#input2').oninput = function searchTask() {
+document.querySelector('#input2').oninput = function searchTask() { //todo поиск по тексту
     let val = this.value.trim(); //получаем значение, которое пользователь вводит внутрь функции, еще обрезаем пробелы у вводимых данных
     toDoArrFiltered = toDoArr.filter((item) => item.name.includes(val));
     console.log(toDoArrFiltered);
@@ -93,9 +94,34 @@ document.querySelector('#input2').oninput = function searchTask() {
 
 
 
-// function finishTask () {
-//     console.log(2)
-//     }
-//
-// function closeTask () {
+document.querySelector('#sortData').onchange = function sortDate() { //todo сортировка по дате
+    let dateEntered = this.value;
+    console.log(dateEntered)
+    toDoArrDate = toDoArr.slice(0)
+    if (dateEntered === "down1"){
+       toDoArrDate.sort();
+       console.log(toDoArrDate)
+    }
+    if (dateEntered === "up1"){
+        toDoArrDate.reverse();
+        console.log(toDoArrDate)
+    }
+    let displayTask = ''; //перерисовываю форму, по идее надо обратиться к функции set, но в ней другой массив обрабатывается, поэтому пишу все заново для нового массива
+    toDoArrDate.forEach(item => { //выводим элементы
+        swap(item);
+        //todo привязываем контекст через this
+        displayTask += `<li id ="${item.id}" class="tasks">${prior}
+        <label>${item.name}</label>
+        <label>${item.time}</label>
+        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        </li>`;
+        unfinishedTasks.innerHTML = displayTask;
+    })
+//не понимаю, как сделать связь между массивами. Допустим, я отсортировала массив по дате, а потом хочу сделать поиск. В поиске используется уже
+//массив toDoArr, а не toDoArrDate. Можно было бы во всех функциях использовать toDoArr, но тогда не будет корректно работать каждая функция.
+// Например, в сортировке по дате если сделать просто toDoArr, то при первой сортировке по возрастанию все сработает, а когда я нажимаю сразу после этого
+// на сортировку по убыванию, массив не меняется. Что логично, так как он сортирует отсортированный массив, соответственно получает то же самое, что
+// что было на предыдущем шаге.
+}
+
 
