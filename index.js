@@ -4,6 +4,7 @@ const unfinishedTasks = document.getElementById('unfinished-tasks');
 const toDoArr = [];
 let toDoArrFiltered = [];
 let toDoArrDate = [];
+let toDoArrPriority = [];
 const label = document.createElement('label');
 const priority = document.getElementById('prioritet');
 //todo для id всё же лучше использовать counter
@@ -98,11 +99,11 @@ document.querySelector('#sortData').onchange = function sortDate() { //todo со
     let dateEntered = this.value;
     console.log(dateEntered)
     toDoArrDate = toDoArr.slice(0)
-    if (dateEntered === "down1"){
-       toDoArrDate.sort();
-       console.log(toDoArrDate)
+    if (dateEntered === "down1") {
+        toDoArrDate.sort();
+        console.log(toDoArrDate)
     }
-    if (dateEntered === "up1"){
+    if (dateEntered === "up1") {
         toDoArrDate.reverse();
         console.log(toDoArrDate)
     }
@@ -117,11 +118,36 @@ document.querySelector('#sortData').onchange = function sortDate() { //todo со
         </li>`;
         unfinishedTasks.innerHTML = displayTask;
     })
+}
+document.querySelector('#sortPriority').onchange = function sortPriority(){ //todo сортировка по приоритету
+        let priorityEntered = this.value;
+        console.log(priorityEntered);
+        toDoArrPriority = toDoArr.slice(0);
+        if (priorityEntered === "down2") {
+            toDoArrPriority.sort();
+            console.log(toDoArrPriority)
+        }
+    if (priorityEntered === "up2") {
+        toDoArrPriority.reverse();
+        console.log(toDoArrPriority)
+    }
+    let displayTask = ''; //перерисовываю форму, по идее надо обратиться к функции set, но в ней другой массив обрабатывается, поэтому пишу все заново для нового массива
+    toDoArrPriority.forEach(item => { //выводим элементы
+        swap(item);
+        //todo привязываем контекст через this
+        displayTask += `<li id ="${item.id}" class="tasks">${prior}
+        <label>${item.name}</label>
+        <label>${item.time}</label>
+        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        </li>`;
+        unfinishedTasks.innerHTML = displayTask;
+    })
+}
 //не понимаю, как сделать связь между массивами. Допустим, я отсортировала массив по дате, а потом хочу сделать поиск. В поиске используется уже
 //массив toDoArr, а не toDoArrDate. Можно было бы во всех функциях использовать toDoArr, но тогда не будет корректно работать каждая функция.
 // Например, в сортировке по дате если сделать просто toDoArr, то при первой сортировке по возрастанию все сработает, а когда я нажимаю сразу после этого
 // на сортировку по убыванию, массив не меняется. Что логично, так как он сортирует отсортированный массив, соответственно получает то же самое, что
 // что было на предыдущем шаге.
-}
+
 
 
