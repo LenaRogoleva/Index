@@ -125,9 +125,11 @@ body {
 /*.unfinished-tasks.hide {*/
 /*    display:none;*/
 /*}*/
-::-webkit-scrollbar{
-  width: 15px;
+.lower.scroll{
+  width: 10px;
+  background-color: darksalmon;
 }
+
 .unf-tasks.hide {
     display: none;
 }
