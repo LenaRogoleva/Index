@@ -31,7 +31,12 @@ body {
 .tasks {
   margin: 0 auto;
   padding: 10px;
-  background-color: pink;
+  background-color: white;
+}
+.tasks-finish {
+  margin: 0 auto;
+  padding: 10px;
+  background-color: green
 }
 .inp {
   padding: 8px;

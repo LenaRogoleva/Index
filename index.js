@@ -6,6 +6,7 @@ let toDoArrFiltered = [];
 let toDoArrDate = [];
 let toDoArrPriority = [];
 let toDoArrFilterPriority = [];
+let toDoArrFinish=[];
 const label = document.createElement('label');
 const priority = document.getElementById('prioritet');
 //todo для id всё же лучше использовать counter
@@ -51,6 +52,7 @@ function set() {
         <label>${item.name}</label>
         <label>${item.time}</label>
         <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        <i id = "${item.id}" onclick="finishTask(this)" class ="material-icons">checked</i>
         </li>`;
         unfinishedTasks.innerHTML = displayTask;
     })
@@ -67,6 +69,8 @@ addButton.addEventListener('click', function () {
 // можешь открыть консоль и сама посмотреть
 function deleteTask(item) { //todo кнопка удаления задачи
     console.log(item);
+    let check = confirm ("Вы действительно хотите удалить задачу?");
+    if (check === true){
     // let toDoArrDelete = toDoArr.slice(0); //копируем элементы в новый массивы
     const deleteIndex = toDoArr.findIndex((toDo) => toDo.id === '<i id="${item.id}">delete</i>');
     //toDoArr.splice(deleteIndex-1, 1); //todo работает, когда иду из середины
@@ -75,7 +79,7 @@ function deleteTask(item) { //todo кнопка удаления задачи
     set();
 
     if (toDoArr.length === 0) unfinishedTasks.innerHTML = '' //если массив пустой, то удаляем и из визуала
-}
+}}
 
 document.querySelector('#input2').oninput = function searchTask() { //todo поиск по тексту
     let val = this.value.trim(); //получаем значение, которое пользователь вводит внутрь функции, еще обрезаем пробелы у вводимых данных
@@ -128,7 +132,7 @@ document.querySelector('#sortPriority').onchange = function sortPriority(){ //to
                 if ( prev.prior < next.prior) return -1;
                 if ( prev.prior > next.prior ) return 1;
                 else return 0;
-            })};
+            })}
             console.log(toDoArrPriority);
 
             if (priorityEntered === "up2") {
@@ -178,6 +182,21 @@ document.querySelector('#filter').onchange = function FilterPriority(){ //todo �
         </li>`;
         unfinishedTasks.innerHTML = displayTask;
     })
+}
+function finishTask(){
+    // for (let i=0; i < toDoArr.length; i++) {
+        let finishIndex = toDoArr.find( (toDo)=> toDo.id === '<i id = "${item.id}" >checked</i>');
+        // toDoArrFinish.unshift(item);
+        console.log(finishIndex)
+    toDoArr.forEach(item => { //выводим элементы, здесь нужен новый массив
+        swap(item);
+        unfinishedTasks.innerHTML += `<li id ="${item.id}" class="tasks-finish">${prior}
+        <label>${item.name}</label>
+        <label>${item.time}</label>
+        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        </li>`;
+    })
+    // }
 }
 
 
