@@ -1,6 +1,7 @@
 const addButton = document.getElementById('add');
 const inputTask = document.getElementById('new-task');
 const unfinishedTasks = document.getElementById('unfinished-tasks');
+const finishedTasks = document.getElementById('finished-tasks');
 const toDoArr = [];
 let toDoArrFiltered = [];
 let toDoArrDate = [];
@@ -183,22 +184,34 @@ document.querySelector('#filter').onchange = function FilterPriority(){ //todo �
         unfinishedTasks.innerHTML = displayTask;
     })
 }
-function finishTask(){
-    // for (let i=0; i < toDoArr.length; i++) {
-        let finishIndex = toDoArr.find( (toDo)=> toDo.id === '<i id = "${item.id}" >checked</i>');
-        // toDoArrFinish.unshift(item);
-        console.log(finishIndex)
-    toDoArr.forEach(item => { //выводим элементы, здесь нужен новый массив
+function finishTask(){ //todo завершенные дела
+        let finishElement = toDoArr.find( toDo=> toDo.id === toDo.id);
+        toDoArrFinish.unshift(finishElement);
+        console.log(finishElement)
+    //надо прописать удаление элемента finishElement из массива toDoArr
+
+    toDoArrFinish.forEach(finishElement => { //выводим элементы
+        swap(finishElement);
+        finishedTasks.innerHTML = `<li id ="${finishElement.id}" class="tasks-finish">${prior}
+        <label>${finishElement.name}</label>
+        <label>${finishElement.time}</label>
+        <i id="${finishElement.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        </li>`;
+    })
+
+    toDoArr.forEach( item => { //надо вывести массив toDoArr без элемента finishElement
         swap(item);
-        unfinishedTasks.innerHTML += `<li id ="${item.id}" class="tasks-finish">${prior}
+        unfinishedTasks.innerHTML += `<li id ="${item.id}" class="tasks">${prior}
         <label>${item.name}</label>
         <label>${item.time}</label>
         <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
         </li>`;
     })
-    // }
-}
 
+}
+document.querySelector('#unfinished-tasks').onclick = function editTask (){ //todo редактирование текста
+    unfinishedTasks.setAttribute("contenteditable", "true");
+}
 
 
 
@@ -206,7 +219,7 @@ function finishTask(){
 //массив toDoArr, а не toDoArrDate. Можно было бы во всех функциях использовать toDoArr, но тогда не будет корректно работать каждая функция.
 // Например, в сортировке по дате если сделать просто toDoArr, то при первой сортировке по возрастанию все сработает, а когда я нажимаю сразу после этого
 // на сортировку по убыванию, массив не меняется. Что логично, так как он сортирует отсортированный массив, соответственно получает то же самое, что
-// что было на предыдущем шаге.
+// было на предыдущем шаге.
 
 
 
