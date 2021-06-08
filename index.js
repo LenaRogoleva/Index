@@ -8,11 +8,9 @@ let toDoArrDate = [];
 let toDoArrPriority = [];
 let toDoArrFilterPriority = [];
 let toDoArrFinish=[];
-const label = document.createElement('label');
 const priority = document.getElementById('prioritet');
-//todo для id всё же лучше использовать counter
 let counter = 0;
-let prior;
+let prior; //глобальный, так как иначе его не видит функция set
 
 function addTask() {
     if (inputTask.value === "") {
@@ -30,8 +28,8 @@ function addTask() {
 }
 
 function swap(item) {
+
     if (item.prior === 'short') {
-        //todo объяви уже этот prior где-нибудь :)
         prior = '<font color="red">низкий</font>'
     } else if (item.prior === 'middle') {
         prior = '<font color="blue">средний</font>'
@@ -41,14 +39,13 @@ function swap(item) {
     return prior
 }
 
-function set() {
+function set(arr) {
 
     inputTask.value = "";//обнулим значение строки
     let displayTask = '';
 
-    toDoArr.forEach(item => { //выводим элементы
+    arr.forEach(item => { //выводим элементы
         swap(item);
-        //todo привязываем контекст через this
         displayTask += `<li id ="${item.id}" class="tasks">${prior}
         <label>${item.name}</label>
         <label>${item.time}</label>
@@ -59,27 +56,19 @@ function set() {
     })
 }
 
-addButton.addEventListener('click', function () {
+function Add () {
     addTask();
-    set();
-});
+    set(toDoArr);
+};
 
-
-//todo т.к. у тебя логика немного отличается от например Викиной, т.е. ты вяжешь событие напрямую через шаблон,
-// то придётся идти на небольшие ухищрения, у i задаём id, пробрасываем контекст элемента и уже в нём получаем id
-// можешь открыть консоль и сама посмотреть
 function deleteTask(item) { //todo кнопка удаления задачи
     console.log(item);
     let check = confirm ("Вы действительно хотите удалить задачу?");
-    if (check === true){
-    // let toDoArrDelete = toDoArr.slice(0); //копируем элементы в новый массивы
-    const deleteIndex = toDoArr.findIndex((toDo) => toDo.id === '<i id="${item.id}">delete</i>');
-    //toDoArr.splice(deleteIndex-1, 1); //todo работает, когда иду из середины
-    toDoArr.splice(deleteIndex+0,1); //todo работает, когда иду от первой задачи к последующим последовательно
+    if (check){
+    const deleteIndex = toDoArr.findIndex((toDo) => toDo.id === +item.id);
+    toDoArr.splice(deleteIndex,1);
     console.log(toDoArr)
-    set();
-
-    if (toDoArr.length === 0) unfinishedTasks.innerHTML = '' //если массив пустой, то удаляем и из визуала
+    set(toDoArr);
 }}
 
 document.querySelector('#input2').oninput = function searchTask() { //todo поиск по тексту
@@ -88,17 +77,9 @@ document.querySelector('#input2').oninput = function searchTask() { //todo по�
     console.log(toDoArrFiltered);
     unfinishedTasks.innerHTML = '';
     for (let i = 0; i < val.length; i++) {
-        toDoArrFiltered.forEach(item => { //выводим элементы
-            swap(item);
-            unfinishedTasks.innerHTML += `<li id ="${item.id}" class="tasks">${prior}
-        <label>${item.name}</label>
-        <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
-        </li>`;
-        })
+        set(toDoArrFiltered)
     }
 }
-
 
 document.querySelector('#sortData').onchange = function sortDate() { //todo сортировка по дате
     let dateEntered = this.value;
@@ -112,17 +93,7 @@ document.querySelector('#sortData').onchange = function sortDate() { //todo со
         toDoArrDate.reverse();
         console.log(toDoArrDate)
     }
-    let displayTask = ''; //перерисовываю форму, по идее надо обратиться к функции set, но в ней другой массив обрабатывается, поэтому пишу все заново для нового массива
-    toDoArrDate.forEach(item => { //выводим элементы
-        swap(item);
-        //todo привязываем контекст через this
-        displayTask += `<li id ="${item.id}" class="tasks">${prior}
-        <label>${item.name}</label>
-        <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
-        </li>`;
-        unfinishedTasks.innerHTML = displayTask;
-    })
+    set(toDoArrDate);
 }
 document.querySelector('#sortPriority').onchange = function sortPriority(){ //todo сортировка по приоритету
         let priorityEntered = this.value;
@@ -144,17 +115,7 @@ document.querySelector('#sortPriority').onchange = function sortPriority(){ //to
                 });
                 console.log(toDoArrPriority)
         }
-    let displayTask = ''; //перерисовываю форму, по идее надо обратиться к функции set, но в ней другой массив обрабатывается, поэтому пишу все заново для нового массива
-    toDoArrPriority.forEach(item => { //выводим элементы
-        swap(item);
-        //todo привязываем контекст через this
-        displayTask += `<li id ="${item.id}" class="tasks">${prior}
-        <label>${item.name}</label>
-        <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
-        </li>`;
-        unfinishedTasks.innerHTML = displayTask;
-    })
+        set (toDoArrPriority);
 }
 
 document.querySelector('#filter').onchange = function FilterPriority(){ //todo фильтр по приоритету
@@ -172,20 +133,11 @@ document.querySelector('#filter').onchange = function FilterPriority(){ //todo �
         if (selectedPriority === "any") {
         toDoArrFilterPriority = toDoArr.slice(0);
         }
-    let displayTask = ''; //перерисовываю форму, по идее надо обратиться к функции set, но в ней другой массив обрабатывается, поэтому пишу все заново для нового массива
-    toDoArrFilterPriority.forEach(item => { //выводим элементы
-        swap(item);
-        //todo привязываем контекст через this
-        displayTask += `<li id ="${item.id}" class="tasks">${prior}
-        <label>${item.name}</label>
-        <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
-        </li>`;
-        unfinishedTasks.innerHTML = displayTask;
-    })
+    set (toDoArrFilterPriority);
 }
-function finishTask(){ //todo завершенные дела
-        let finishElement = toDoArr.find( toDo=> toDo.id === toDo.id);
+
+function finishTask(item){ //todo завершенные дела
+        let finishElement = toDoArr.find( toDo=> toDo.id === +item.id);
         toDoArrFinish.unshift(finishElement);
         console.log(finishElement)
     //надо прописать удаление элемента finishElement из массива toDoArr
