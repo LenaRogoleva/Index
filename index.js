@@ -95,27 +95,29 @@ document.querySelector('#sortData').onchange = function sortDate() { //todo со
     }
     set(toDoArrDate);
 }
-document.querySelector('#sortPriority').onchange = function sortPriority(){ //todo сортировка по приоритету
-        let priorityEntered = this.value;
-        console.log(priorityEntered);
-        toDoArrPriority = toDoArr.slice(0);
-        if (priorityEntered === "down2") {
-            toDoArrPriority.sort((prev, next) => {
-                if ( prev.prior < next.prior) return -1;
-                if ( prev.prior > next.prior ) return 1;
-                else return 0;
-            })}
-            console.log(toDoArrPriority);
+document.querySelector('#sortPriority').onchange = function sortPriority() { //todo сортировка по приоритету
+    let priorityEntered = this.value;
+    console.log(priorityEntered);
+    toDoArrPriority = JSON.parse(JSON.stringify(toDoArr)); //переводим массив в строку, а затем обратно в объект
+    if (priorityEntered === "down2") {
+        toDoArrPriority.sort((prev, next) => prev.prior - next.prior );
+        //     if ( prev.prior < next.prior) return -1;
+        //     if ( prev.prior > next.prior ) return 1;
+        //     else return 0;
+        // })}
+    }
+    console.log(toDoArrPriority);
 
-            if (priorityEntered === "up2") {
-                toDoArrPriority.sort((prev, next) => {
-                    if ( prev.prior < next.prior) return 1;
-                    if ( prev.prior > next.prior ) return -1;
-                    else return 0;
-                });
-                console.log(toDoArrPriority)
-        }
-        set (toDoArrPriority);
+    if (priorityEntered === "up2") {
+        toDoArrPriority.sort((prev, next) => next.prior - prev.prior);
+        //     if ( prev.prior < next.prior) return 1;
+        //     if ( prev.prior > next.prior ) return -1;
+        //     else return 0;
+        // });
+    }
+    console.log(toDoArrPriority)
+
+    set(toDoArrPriority);
 }
 
 document.querySelector('#filter').onchange = function FilterPriority(){ //todo фильтр по приоритету
