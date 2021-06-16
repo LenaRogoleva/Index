@@ -14,7 +14,6 @@ body {
     display: inline-block;
     display: flex;
     justify-content: center;
-
 }
 
 .delete {
@@ -75,6 +74,7 @@ body {
   background-color: darksalmon;
 }
 
-.unf-tasks.hide {
-    display: none;
+.fin-tasks {
+    height: 120px;
 }
+

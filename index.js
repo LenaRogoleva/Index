@@ -62,12 +62,10 @@ function Add () {
 };
 
 function deleteTask(item) { //todo кнопка удаления задачи
-    console.log(item);
     let check = confirm ("Вы действительно хотите удалить задачу?");
     if (check){
     const deleteIndex = toDoArr.findIndex((toDo) => toDo.id === +item.id);
     toDoArr.splice(deleteIndex,1);
-    console.log(toDoArr)
     set(toDoArr);
 }}
 
@@ -100,23 +98,24 @@ document.querySelector('#sortPriority').onchange = function sortPriority() { //t
     console.log(priorityEntered);
     toDoArrPriority = JSON.parse(JSON.stringify(toDoArr)); //переводим массив в строку, а затем обратно в объект
     if (priorityEntered === "down2") {
-        toDoArrPriority.sort((prev, next) => prev.prior - next.prior );
-        //     if ( prev.prior < next.prior) return -1;
-        //     if ( prev.prior > next.prior ) return 1;
-        //     else return 0;
-        // })}
+        toDoArrPriority.sort((prev, next) => {
+            if (prev.prior < next.prior) return -1;
+            if (prev.prior > next.prior) return 1;
+            else return 0;
+        });
+        console.log(toDoArrPriority);
     }
-    console.log(toDoArrPriority);
+
 
     if (priorityEntered === "up2") {
         toDoArrPriority.sort((prev, next) => next.prior - prev.prior);
         //     if ( prev.prior < next.prior) return 1;
         //     if ( prev.prior > next.prior ) return -1;
-        //     else return 0;
+        //     else return 0;1
         // });
-    }
-    console.log(toDoArrPriority)
 
+        console.log(toDoArrPriority)
+    }
     set(toDoArrPriority);
 }
 
@@ -133,7 +132,7 @@ document.querySelector('#filter').onchange = function FilterPriority(){ //todo �
         toDoArrFilterPriority = toDoArr.filter(item => item.prior === "high")
         }
         if (selectedPriority === "any") {
-        toDoArrFilterPriority = toDoArr.slice(0);
+        toDoArrFilterPriority = JSON.parse(JSON.stringify(toDoArr));
         }
     set (toDoArrFilterPriority);
 }
@@ -142,26 +141,17 @@ function finishTask(item){ //todo завершенные дела
         let finishElement = toDoArr.find( toDo=> toDo.id === +item.id);
         toDoArrFinish.unshift(finishElement);
         console.log(finishElement)
-    //надо прописать удаление элемента finishElement из массива toDoArr
+        let i= toDoArr.indexOf(finishElement);
+        toDoArr.splice(i,1); //удаление элемента finishElement из массива toDoArr
+        set (toDoArr);
 
-    toDoArrFinish.forEach(finishElement => { //выводим элементы
-        swap(finishElement);
-        finishedTasks.innerHTML = `<li id ="${finishElement.id}" class="tasks-finish">${prior}
+    toDoArrFinish.forEach(finishElement => { //выводим элементы, прописала новый класс
+        finishedTasks.innerHTML = `<li id ="${finishElement.id}" class="tasks-finish">${prior} 
         <label>${finishElement.name}</label>
         <label>${finishElement.time}</label>
         <i id="${finishElement.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
         </li>`;
     })
-
-    toDoArr.forEach( item => { //надо вывести массив toDoArr без элемента finishElement
-        swap(item);
-        unfinishedTasks.innerHTML += `<li id ="${item.id}" class="tasks">${prior}
-        <label>${item.name}</label>
-        <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
-        </li>`;
-    })
-
 }
 document.querySelector('#unfinished-tasks').onclick = function editTask (){ //todo редактирование текста
     unfinishedTasks.setAttribute("contenteditable", "true");
