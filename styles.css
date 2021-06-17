@@ -35,7 +35,12 @@ body {
 .tasks-finish {
   margin: 0 auto;
   padding: 10px;
-  background-color: green
+  background-color: #ADFF2F
+}
+.tasks-cancel {
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #FA8072
 }
 .inp {
   padding: 8px;
@@ -75,6 +80,15 @@ body {
 }
 
 .fin-tasks {
+    height: 60px;
+}
+
+.unf-tasks {
     height: 120px;
 }
+
+.cancel-tasks {
+    height: 60px;
+}
+
 
