@@ -108,7 +108,7 @@ document.querySelector('#sortPriority').onchange = function sortPriority() { //t
         toDoArrPriority.sort((prev, next) => next.prior - prev.prior);
         //     if ( prev.prior < next.prior) return 1;
         //     if ( prev.prior > next.prior ) return -1;
-        //     else return 0;1
+        //     else return 0;
         // });
 
     }
@@ -178,20 +178,25 @@ function cancelTask(item){ //todo отмененные дела
         </li>`;
         cancelTasks.innerHTML = displayTask;
     });
-
 }
+
+document.querySelector('#active').onchange = function activeStatus(){ //todo фильтр по статусу (активные задачи)
+    cancelTasks.innerHTML = "";
+    finishedTasks.innerHTML = "";
+}
+document.querySelector('#canceled').onchange = function canceledStatus(){ //todo фильтр по статусу (отмененные задачи)
+    finishedTasks.innerHTML = "";
+    unfinishedTasks.innerHTML = "";
+}
+document.querySelector('#completed').onchange = function completedStatus(){ //todo фильтр по статусу (завершенные задачи)
+    unfinishedTasks.innerHTML = "";
+    cancelTasks.innerHTML = "";
+}
+
 
 document.querySelector('#unfinished-tasks').onclick = function editTask (){ //todo редактирование текста
     unfinishedTasks.setAttribute("contenteditable", "true");
 }
-
-
-
-//не понимаю, как сделать связь между массивами. Допустим, я отсортировала массив по дате, а потом хочу сделать поиск. В поиске используется уже
-//массив toDoArr, а не toDoArrDate. Можно было бы во всех функциях использовать toDoArr, но тогда не будет корректно работать каждая функция.
-// Например, в сортировке по дате если сделать просто toDoArr, то при первой сортировке по возрастанию все сработает, а когда я нажимаю сразу после этого
-// на сортировку по убыванию, массив не меняется. Что логично, так как он сортирует отсортированный массив, соответственно получает то же самое, что
-// было на предыдущем шаге.
 
 
 
