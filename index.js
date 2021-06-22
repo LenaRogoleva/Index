@@ -13,6 +13,7 @@ let toDoArrCancel =[];
 const priority = document.getElementById('prioritet');
 let counter = 0;
 let prior; //глобальный, так как иначе его не видит функция set
+let statusChecked = [];
 
 function addTask() {
     if (inputTask.value === "") {
@@ -41,7 +42,7 @@ function swap(item) {
     return prior
 }
 
-function set(arr) {
+function set(arr,taskTypeBlock, arrDelete) {
 
     inputTask.value = "";//обнулим значение строки
     let displayTask = '';
@@ -51,25 +52,25 @@ function set(arr) {
         displayTask += `<li id ="${item.id}" class="tasks">${prior}
         <label>${item.name}</label>
         <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        <i id="${item.id}" onclick="deleteTask(this, arrDelete)" class ="material-icons delete">delete</i>
         <i id = "${item.id}" onclick="finishTask(this)" class ="material-icons">checked</i>
         <i id = "${item.id}" onclick="cancelTask(this)" class ="material-icons">close</i>
         </li>`;
-        unfinishedTasks.innerHTML = displayTask;
+        taskTypeBlock.innerHTML = displayTask;
     })
 }
 
 function Add () {
     addTask();
-    set(toDoArr);
+    set(toDoArr, unfinishedTasks);
 };
 
-function deleteTask(item) { //todo кнопка удаления задачи
+function deleteTask(item,arrDelete) { //todo кнопка удаления задачи
     let check = confirm ("Вы действительно хотите удалить задачу?");
     if (check){
     const deleteIndex = toDoArr.findIndex((toDo) => toDo.id === +item.id);
-    toDoArr.splice(deleteIndex,1);
-    set(toDoArr);
+    arrDelete.splice(deleteIndex,1); //здесь должен оказываться нужный массив, но не работает
+    set(toDoArr, unfinishedTasks);
 }}
 
 document.querySelector('#input2').oninput = function searchTask() { //todo поиск по тексту
@@ -77,7 +78,7 @@ document.querySelector('#input2').oninput = function searchTask() { //todo по�
     toDoArrFiltered = toDoArr.filter((item) => item.name.includes(val));
     unfinishedTasks.innerHTML = '';
     for (let i = 0; i < val.length; i++) {
-        set(toDoArrFiltered)
+        set(toDoArrFiltered, unfinishedTasks)
     }
 }
 
@@ -90,7 +91,7 @@ document.querySelector('#sortData').onchange = function sortDate() { //todo со
     if (dateEntered === "up1") {
         toDoArrDate.reverse();
     }
-    set(toDoArrDate);
+    set(toDoArrDate, unfinishedTasks);
 }
 document.querySelector('#sortPriority').onchange = function sortPriority() { //todo сортировка по приоритету
     let priorityEntered = this.value;
@@ -105,14 +106,14 @@ document.querySelector('#sortPriority').onchange = function sortPriority() { //t
 
 
     if (priorityEntered === "up2") {
-        toDoArrPriority.sort((prev, next) => next.prior - prev.prior);
-        //     if ( prev.prior < next.prior) return 1;
-        //     if ( prev.prior > next.prior ) return -1;
-        //     else return 0;
-        // });
+        toDoArrPriority.sort((prev, next) => {
+            if ( prev.prior < next.prior) return 1;
+            if ( prev.prior > next.prior ) return -1;
+            else return 0;
+        });
 
     }
-    set(toDoArrPriority);
+    set(toDoArrPriority, unfinishedTasks);
 }
 
 document.querySelector('#filter').onchange = function FilterPriority(){ //todo фильтр по приоритету
@@ -129,7 +130,7 @@ document.querySelector('#filter').onchange = function FilterPriority(){ //todo �
         if (selectedPriority === "any") {
         toDoArrFilterPriority = JSON.parse(JSON.stringify(toDoArr));
         }
-    set (toDoArrFilterPriority);
+    set (toDoArrFilterPriority, unfinishedTasks);
 }
 
 function finishTask(item) { //todo завершенные дела
@@ -137,7 +138,7 @@ function finishTask(item) { //todo завершенные дела
     toDoArrFinish.unshift(finishElement);
     let i = toDoArr.indexOf(finishElement);
     toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
-    set(toDoArr);
+    set(toDoArr, unfinishedTasks);
     let displayTask = '';
 
     toDoArrFinish.forEach(item => { //выводим элементы, добавила новый класс
@@ -145,7 +146,7 @@ function finishTask(item) { //todo завершенные дела
         displayTask += `<li id ="${item.id}" class="tasks-finish">${prior}
         <label>${item.name}</label>
         <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        <i id="${item.id}" onclick="deleteTask(this,toDoArrFinish)" class ="material-icons delete">delete</i>
         <i id = "${item.id}" onclick="cancelTask(this)" class ="material-icons">close</i>
         </li>`;
         finishedTasks.innerHTML = displayTask;
@@ -165,7 +166,7 @@ function cancelTask(item){ //todo отмененные дела
     toDoArrCancel.unshift (cancelElement);
     let i = toDoArr.indexOf(cancelElement);
     toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
-    set(toDoArr);
+    set(toDoArr, unfinishedTasks);
     let displayTask = '';
 
     toDoArrCancel.forEach(item => { //выводим элементы, добавила новый класс
@@ -173,30 +174,73 @@ function cancelTask(item){ //todo отмененные дела
         displayTask += `<li id ="${item.id}" class="tasks-cancel">${prior}
         <label>${item.name}</label>
         <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this)" class ="material-icons delete">delete</i>
+        <i id="${item.id}" onclick="deleteTask(this, toDoArrCancel)" class ="material-icons delete">delete</i>
         <i id = "${item.id}" onclick="finishTask(this)" class ="material-icons">checked</i>
         </li>`;
         cancelTasks.innerHTML = displayTask;
     });
 }
 
-document.querySelector('#active').onchange = function activeStatus(){ //todo фильтр по статусу (активные задачи)
-    cancelTasks.innerHTML = "";
-    finishedTasks.innerHTML = "";
+function check (selectedStatus){ //вспомогательная функция для фильтра по статусу
+    status = statusChecked.findIndex( item => item===selectedStatus);
+    statusChecked.splice(status,1);
 }
-document.querySelector('#canceled').onchange = function canceledStatus(){ //todo фильтр по статусу (отмененные задачи)
-    finishedTasks.innerHTML = "";
-    unfinishedTasks.innerHTML = "";
+document.querySelector('#active').onchange = function activeStatus(event){ //todo фильтр по статусу (активные задачи)
+    if (event.target.checked) {
+        statusChecked.unshift("active");
+        check("canceled");
+        check("completed")
+        set(toDoArr, unfinishedTasks)
+    } else {
+        unfinishedTasks.innerHTML = "";
+    }
+    if (statusChecked.includes("canceled")) {
+        set(toDoArrCancel, cancelTasks)
+    }
+    if (statusChecked.includes("completed")) {
+        set(toDoArrFinish, finishedTasks)
+    }
 }
-document.querySelector('#completed').onchange = function completedStatus(){ //todo фильтр по статусу (завершенные задачи)
-    unfinishedTasks.innerHTML = "";
-    cancelTasks.innerHTML = "";
+
+document.querySelector('#canceled').onchange = function canceledStatus(event) { //todo фильтр по статусу (отмененные задачи)
+    if (event.target.checked) {
+        statusChecked.unshift("canceled");
+        check ("active")
+        check ("completed")
+        set(toDoArrCancel, cancelTasks)
+    } else {
+        cancelTasks.innerHTML = "";
+    }
+    if (statusChecked.includes("active")) {
+        set(toDoArr, unfinishedTasks)
+    }
+    if (statusChecked.includes("completed")) {
+        set(toDoArrFinish, finishedTasks)
+    }
+}
+
+document.querySelector('#completed').onchange = function completedStatus(event){ //todo фильтр по статусу (завершенные задачи)
+    if (event.target.checked) {
+        statusChecked.unshift("completed");
+        check("canceled");
+        check ("active")
+        set(toDoArrFinish, finishedTasks)
+    } else {
+        finishedTasks.innerHTML = "";
+    }
+    if (statusChecked.includes("canceled")) {
+        set(toDoArrCancel, cancelTasks)
+    }
+    if (statusChecked.includes("active")) {
+        set(toDoArr, unfinishedTasks)
+    }
 }
 
 
 document.querySelector('#unfinished-tasks').onclick = function editTask (){ //todo редактирование текста
     unfinishedTasks.setAttribute("contenteditable", "true");
 }
+
 
 
 
