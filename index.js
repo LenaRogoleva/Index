@@ -199,7 +199,6 @@ function cancelTask (item){ //todo отмененные дела
 
 function filStatus(event, checkBoxName, arr, area){ //todo вспомогательная функция для фильтра по статусу
     if (event.target.checked) {
-            statusChecked.splice(0, 3, checkBoxName);
             set(arr, area)
         }
         else {
