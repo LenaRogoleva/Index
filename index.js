@@ -13,7 +13,6 @@ let toDoArrCancel =[];
 const priority = document.getElementById('prioritet');
 let counter = 0;
 let prior; //глобальный, так как иначе его не видит функция set
-let statusChecked = [];
 
 function addTask() {
     if (inputTask.value === "") {
@@ -42,17 +41,20 @@ function swap(item) {
     return prior
 }
 
-function set(arr,taskTypeBlock, arrDelete) {
+function set(arr,taskTypeBlock) {
 
     inputTask.value = "";//обнулим значение строки
     let displayTask = '';
-
+    if (!arr.length){
+        taskTypeBlock.innerHTML = "";
+        return;
+    }
     arr.forEach(item => { //выводим элементы
         const prior = swap(item);
         displayTask += `<li id ="${item.id}" class="tasks">${prior}
         <label>${item.name}</label>
         <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this, toDoArr)" class ="material-icons delete">delete</i>
+        <i id="${item.id}" onclick="deleteTask(this, toDoArr,unfinishedTasks)" class ="material-icons delete">delete</i>
         <i id = "${item.id}" onclick="finishTask(this)" class ="material-icons">checked</i>
         <i id = "${item.id}" onclick="cancelTask(this)" class ="material-icons">close</i>
         </li>`;
@@ -65,14 +67,16 @@ function Add () {
     set(toDoArr, unfinishedTasks);
 };
 
-function deleteTask(item,arrDelete) { //todo кнопка удаления задачи, не работает в завершенных и отмененных
+function deleteTask(item,arr, taskTypeBlock) { //todo кнопка удаления задачи, не работает в завершенных и отмененных
     let check = confirm ("Вы действительно хотите удалить задачу?");
     if (check){
-    const deleteIndex = arrDelete.findIndex((toDo) => toDo.id === +item.id);
-    arrDelete.splice(deleteIndex,1); //здесь должен оказываться нужный массив, но не работает
-    set(toDoArr, unfinishedTasks);
+    const deleteIndex = arr.findIndex((toDo) => toDo.id === +item.id);
+    arr.splice(deleteIndex,1); //здесь должен оказываться нужный массив, но не работает
+    unfinishedTasks.removeChild(li);
+    // set(toDoArr, unfinishedTasks);
     }
 }
+
 
 document.querySelector('#input2').oninput = function searchTask() { //todo поиск по тексту
     let val = this.value.trim(); //получаем значение, которое пользователь вводит внутрь функции, еще обрезаем пробелы у вводимых данных
@@ -141,6 +145,9 @@ function handleTask(item, currentArr) { //todo вспомогательная ф
     let i = toDoArr.indexOf(finishElement);
     toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
     set(toDoArr, unfinishedTasks);
+    if (toDoArr.length ===0){ //если массив пустой
+        unfinishedTasks.innerHTML = "";
+    }
 }
 
 function finishOrCancelTask(item, arr, element, arrDelete, area){ //todo завершенные или отмененные дела
@@ -209,10 +216,10 @@ function filStatus(event, checkBoxName, arr, area){ //todo вспомогате�
 document.querySelector('#active').onchange = function activeStatus(event) { //todo фильтр по статусу (активные задачи)
     filStatus(event, "active", toDoArr, unfinishedTasks);
 }
-document.querySelector('#canceled').onchange = function activeStatus(event) { //todo фильтр по статусу (отмененные задачи)
+document.querySelector('#canceled').onchange = function canceledStatus(event) { //todo фильтр по статусу (отмененные задачи)
     filStatus(event, "canceled", toDoArrCancel, cancelTasks);
 }
-document.querySelector('#completed').onchange = function activeStatus(event) { //todo фильтр по статусу (завершенные задачи)
+document.querySelector('#completed').onchange = function completedStatus(event) { //todo фильтр по статусу (завершенные задачи)
     filStatus(event, "completed", toDoArrFinish, finishedTasks);
 }
 
