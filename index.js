@@ -41,7 +41,7 @@ function swap(item) {
     return prior
 }
 
-function set(arr,taskTypeBlock) {
+function set(arr, areaClass, taskTypeBlock) {
 
     inputTask.value = "";//обнулим значение строки
     let displayTask = '';
@@ -51,10 +51,10 @@ function set(arr,taskTypeBlock) {
     }
     arr.forEach(item => { //выводим элементы
         const prior = swap(item);
-        displayTask += `<li id ="${item.id}" class="tasks">${prior}
+        displayTask += `<li id ="${item.id}" class="${areaClass}">${prior}
         <label>${item.name}</label>
         <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this, toDoArr,unfinishedTasks)" class ="material-icons delete">delete</i>
+        <i id="${item.id}" onclick="deleteTask(this, toDoArr)" class ="material-icons delete">delete</i>
         <i id = "${item.id}" onclick="finishTask(this)" class ="material-icons">checked</i>
         <i id = "${item.id}" onclick="cancelTask(this)" class ="material-icons">close</i>
         </li>`;
@@ -64,26 +64,28 @@ function set(arr,taskTypeBlock) {
 
 function Add () {
     addTask();
-    set(toDoArr, unfinishedTasks);
-};
+    set(toDoArr, "tasks",unfinishedTasks);
+}
 
-function deleteTask(item,arr, taskTypeBlock) { //todo кнопка удаления задачи, не работает в завершенных и отмененных
+function deleteTask(item, arr) { //todo кнопка удаления задачи, не работает в завершенных и отмененных
     let check = confirm ("Вы действительно хотите удалить задачу?");
     if (check){
     const deleteIndex = arr.findIndex((toDo) => toDo.id === +item.id);
     arr.splice(deleteIndex,1); //здесь должен оказываться нужный массив, но не работает
-    unfinishedTasks.removeChild(li);
-    // set(toDoArr, unfinishedTasks);
+    let li = document.getElementById(item.id)
+    li.remove();
     }
 }
 
 
 document.querySelector('#input2').oninput = function searchTask() { //todo поиск по тексту
     let val = this.value.trim(); //получаем значение, которое пользователь вводит внутрь функции, еще обрезаем пробелы у вводимых данных
-    toDoArrFiltered = toDoArr.filter((item) => item.name.includes(val));
-    unfinishedTasks.innerHTML = '';
     for (let i = 0; i < val.length; i++) {
-        set(toDoArrFiltered, unfinishedTasks)
+        toDoArrFiltered = toDoArr.filter((item) => item.name.includes(val));
+        set(toDoArrFiltered, "tasks", unfinishedTasks);
+    }
+    if (!val.length){
+        set (toDoArr, "tasks", unfinishedTasks);
     }
 }
 
@@ -96,7 +98,7 @@ document.querySelector('#sortData').onchange = function sortDate() { //todo со
     if (dateEntered === "up1") {
         toDoArrDate.reverse();
     }
-    set(toDoArrDate, unfinishedTasks);
+    set(toDoArrDate, "tasks", unfinishedTasks);
 }
 document.querySelector('#sortPriority').onchange = function sortPriority() { //todo сортировка по приоритету
     let priorityEntered = this.value;
@@ -116,7 +118,7 @@ document.querySelector('#sortPriority').onchange = function sortPriority() { //t
             else return 0;
         });
     }
-    set(toDoArrPriority, unfinishedTasks);
+    set(toDoArrPriority, "tasks", unfinishedTasks);
 }
 
 document.querySelector('#filter').onchange = function FilterPriority() { //todo фильтр по приоритету
@@ -135,7 +137,7 @@ document.querySelector('#filter').onchange = function FilterPriority() { //todo 
             toDoArrFilterPriority = JSON.parse(JSON.stringify(toDoArr));
             break;
     }
-    set(toDoArrFilterPriority, unfinishedTasks);
+    set(toDoArrFilterPriority, "tasks", unfinishedTasks);
 }
 
 
@@ -144,20 +146,20 @@ function handleTask(item, currentArr) { //todo вспомогательная ф
     currentArr.unshift(finishElement);
     let i = toDoArr.indexOf(finishElement);
     toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
-    set(toDoArr, unfinishedTasks);
+    set(toDoArr, "tasks", unfinishedTasks);
     if (toDoArr.length ===0){ //если массив пустой
         unfinishedTasks.innerHTML = "";
     }
 }
 
-function finishOrCancelTask(item, arr, element, arrDelete, area){ //todo завершенные или отмененные дела
+function finishOrCancelTask(item, arr, element, area){ //todo завершенные или отмененные дела
     let displayTask = '';
     arr.forEach(item => {
         const prior = swap(item);
         displayTask += `<li id ="${item.id}" class= "${element}" >${prior}
         <label>${item.name}</label>
         <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this, arrDelete)" class ="material-icons delete">delete</i>
+        <i id="${item.id}" onclick="deleteTask(this, toDoArrFinish,toDoArrCancel)" class ="material-icons delete">delete</i>
         <i id = "${item.id}" onclick="cancelTask(this)" class ="material-icons">close</i>
         </li>`;
         area.innerHTML = displayTask;
@@ -166,61 +168,51 @@ function finishOrCancelTask(item, arr, element, arrDelete, area){ //todo зав�
 
 function finishTask(item) { //todo завершенные дела
     handleTask(item, toDoArrFinish);
-    finishOrCancelTask(item, toDoArrFinish, "tasks-finish", toDoArrFinish, finishedTasks) ;
+    finishOrCancelTask(item, toDoArrFinish, "tasks-finish", finishedTasks) ;
 }
 
 function cancelTask (item){ //todo отмененные дела
     handleTask(item, toDoArrCancel);
-    finishOrCancelTask(item, toDoArrCancel, "tasks-cancel", toDoArrCancel,cancelTasks);
+    finishOrCancelTask(item, toDoArrCancel, "tasks-cancel",cancelTasks);
 }
 
+const checkBoxes = ["active", "canceled", "completed"]; //todo для фильтра по статусу
+const activeCheckBoxes = [];
+const statusArea = {
+    active: unfinishedTasks,
+    completed: finishedTasks,
+    canceled: cancelTasks
+}
 
-// const checkBoxes = ["active", "canceled", "completed"]; //не получилось
-// checkBoxes.forEach( (checkBoxName)=> {
-//     document.querySelector('#' + checkBoxName).onchange = function currentStatus(event, arr, area) {
-//         if (event.target.checked) {
-//             statusChecked.splice(0, 3, checkBoxName);
-//             set(arr, area)
-//         }
-//         else {
-//             area.innerHTML = "";
-//         }
-// }});
-//
-// switch(checkBoxes) {
-//     case 'active':
-//         currentStatus(event, toDoArr, unfinishedTasks)
-//             break;
-//     case 'canceled':
-//         currentStatus(event, toDoArrCancel, cancelTasks)
-//         break;
-//     case 'completed':
-//         currentStatus(event, toDoArrFinish, finishedTasks)
-//         break;
-// }
-
-// function check (selectedStatus){ //todo вспомогательная функция для фильтра по статусу
-//     status = statusChecked.findIndex( item => item===selectedStatus);
-//     statusChecked.splice(status,1);
-// }
-
-function filStatus(event, checkBoxName, arr, area){ //todo вспомогательная функция для фильтра по статусу
+function filStatus(event, checkBoxName, arr, areaClass, area) { //todo вспомогательная функция для фильтра по статусу
     if (event.target.checked) {
-            set(arr, area)
-        }
-        else {
+        activeCheckBoxes.push(checkBoxName);
+        checkBoxes.forEach((boxName) => {
+            if (!activeCheckBoxes.includes(boxName)) {
+                statusArea[boxName].innerHTML = ''
+            } else {
+                set(arr, areaClass, area);
+            }
+        })
+    } else {
+        if (!activeCheckBoxes.length) {
+            set(toDoArr, "tasks", unfinishedTasks);
+            set(toDoArrCancel, "tasks-cancel", cancelTasks);
+            set(toDoArrFinish, "tasks-finish", finishedTasks);
+        } else {
             area.innerHTML = "";
         }
+            }
 }
 
 document.querySelector('#active').onchange = function activeStatus(event) { //todo фильтр по статусу (активные задачи)
-    filStatus(event, "active", toDoArr, unfinishedTasks);
+    filStatus(event, "active", toDoArr, "tasks", unfinishedTasks);
 }
 document.querySelector('#canceled').onchange = function canceledStatus(event) { //todo фильтр по статусу (отмененные задачи)
-    filStatus(event, "canceled", toDoArrCancel, cancelTasks);
+    filStatus(event, "canceled", toDoArrCancel, "tasks-cancel", cancelTasks);
 }
 document.querySelector('#completed').onchange = function completedStatus(event) { //todo фильтр по статусу (завершенные задачи)
-    filStatus(event, "completed", toDoArrFinish, finishedTasks);
+    filStatus(event, "completed", toDoArrFinish, "tasks-finish", finishedTasks);
 }
 
 
