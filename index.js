@@ -13,7 +13,7 @@ let toDoArrCancel =[];
 const priority = document.getElementById('prioritet');
 let counter = 0;
 let prior; //глобальный, так как иначе его не видит функция set
-
+let statusChecked = [];
 
 function addTask() {
     if (inputTask.value === "") {
