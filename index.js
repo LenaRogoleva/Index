@@ -17,12 +17,12 @@ fetch('http://127.0.0.1:3000/items')
     .then(response => response.json())
     .then(result => {
         toDoArr = result;
-        set(toDoArr, "tasks", unfinishedTasks);
-        set(toDoArrCancel, "tasks-cancel", cancelTasks);
+        set(toDoArr, "tasks", unfinishedTasks)})
+    .then (data => {
+        toDoArrFinish = data;
         set (toDoArrFinish, "tasks-finish", finishedTasks);
-        console.log(result);
-        console.log(1)
-    });
+        });
+
 
 function addTask() {
     if (inputTask.value === "") {
@@ -181,47 +181,48 @@ document.querySelector('#filter').onchange = function FilterPriority() { //todo 
 
 function handleTask(item, currentArr) { //todo вспомогательная функция для отмененных/завершенных дел
     let finishElement = toDoArr.find(toDo => toDo.id === +item.id);
-    currentArr.unshift(finishElement);
+    // currentArr.unshift(finishElement);
     let i = toDoArr.indexOf(finishElement);
     toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
     set(toDoArr, "tasks", unfinishedTasks);
     if (toDoArr.length ===0){ //если массив пустой
         unfinishedTasks.innerHTML = "";
     }
-}
-
-function finishOrCancelTask(item, arr, element, area){ //todo завершенные или отмененные дела
-    let displayTask = '';
-    arr.forEach(item => {
-        const prior = swap(item);
-        displayTask += `<li id ="${item.id}" class= "${element}" >${prior}
-        <label>${item.name}</label>
-        <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this, toDoArrFinish,toDoArrCancel)" class ="material-icons delete">delete</i>
-        <i id = "${item.id}" onclick="cancelTask(this)" class ="material-icons">close</i>
-        </li>`;
-        area.innerHTML = displayTask;
-    });
-}
-
-function finishTask(item) { //todo завершенные дела
-    handleTask(item, toDoArrFinish);
-    finishOrCancelTask(item, toDoArrFinish, "tasks-finish", finishedTasks) ;
-
     fetch('http://127.0.0.1:3000/items', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
         },
-        body: JSON.stringify(toDoArrFinish)
-    }).then((resp) => resp.json()).then(() => {
-        set(toDoArrFinish, "finish-tasks", finishedTasks);
-})
+        body: JSON.stringify(finishElement)
+    }).then((resp) => resp.json()).then((data) => {
+        toDoArrFinish.push(data);
+        set(toDoArrFinish, "tasks-finish", finishedTasks);
+    })
+}
+
+// function finishOrCancelTask(item, arr, element, area){ //todo завершенные или отмененные дела
+//     let displayTask = '';
+//     arr.forEach(item => {
+//         const prior = swap(item);
+//         displayTask += `<li id ="${item.id}" class= "${element}" >${prior}
+//         <label>${item.name}</label>
+//         <label>${item.time}</label>
+//         <i id="${item.id}" onclick="deleteTask(this, toDoArrFinish,toDoArrCancel)" class ="material-icons delete">delete</i>
+//         <i id = "${item.id}" onclick="cancelTask(this)" class ="material-icons">close</i>
+//         </li>`;
+//         area.innerHTML = displayTask;
+//     });
+// }
+
+function finishTask(item) { //todo завершенные дела
+    handleTask(item);
+    // finishOrCancelTask(item, toDoArrFinish, "tasks-finish", finishedTasks) ;
+
 }
 
 function cancelTask (item){ //todo отмененные дела
     handleTask(item, toDoArrCancel);
-    finishOrCancelTask(item, toDoArrCancel, "tasks-cancel",cancelTasks);
+    // finishOrCancelTask(item, toDoArrCancel, "tasks-cancel",cancelTasks);
 }
 
 const checkBoxes = ["active", "canceled", "completed"]; //todo для фильтра по статусу
