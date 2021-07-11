@@ -9,7 +9,7 @@ let toDoArrPriority = [];
 let toDoArrFilterPriority = [];
 let toDoArrFinish=[];
 let toDoArrCancel =[];
-const priority = document.getElementById('prioritet');
+const priority = document.getElementById('priority');
 let counter = 0;
 let prior; //глобальный, так как иначе его не видит функция set
 
@@ -43,7 +43,7 @@ function addTask() {
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(toDo)
-    }).then((resp) => resp.json()).then((data) => {
+    }).then((resp) => resp.json()).then(async (data) => {
         toDoArr.push(data);
         set(toDoArr, "tasks", unfinishedTasks);
         console.log(2)
@@ -215,7 +215,7 @@ function handleTask(item, currentArr) { //todo вспомогательная ф
 // }
 
 function finishTask(item) { //todo завершенные дела
-    handleTask(item);
+    handleTask(item, toDoArrFinish);
     // finishOrCancelTask(item, toDoArrFinish, "tasks-finish", finishedTasks) ;
 
 }

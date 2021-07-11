@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/solid.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/fontawesome.css">
-    <link rel="stylesheet" href="https://unpkg.com/mustard-ui@latest/dist/css/mustard-ui.min.css">
+<!--    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">-->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">-->
+<!--    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/solid.css">-->
+<!--    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/fontawesome.css">-->
+<!--    <link rel="stylesheet" href="https://unpkg.com/mustard-ui@latest/dist/css/mustard-ui.min.css">-->
     <link rel="stylesheet" href="material-icons.css">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,53 +18,53 @@
     
         <section class = "container w-container">
 
-        <div >
-        <label1 >Приоритет: </label1> 
-        <select name="prioritet" id="prioritet" >
+        <div class = "main">
+        <label1 class = "toDoList">ToDoList</label1>
+        <label2 class = "labelPriority" >Приоритет </label2>
+        <select name="priority" class="priority" id = "priority">
             <option value="short">низкий</option>
             <option value="middle">средний</option>
             <option value="high">высокий</option>
         </select>
 
-        <input type="text" id = "new-task" placeholder = "Введите текст...">
-        <button id = "add" onclick="Add()">Добавить задачу</button>
+        <input type="text" id = "new-task" class = "new-task" placeholder = "Введите текст...">
+        <button id = "add" class = "add" onclick="Add()">Добавить задачу</button>
     </div>
 
-        <form id = "middle">
+        <form id = "middle" class="middle">
         
         <label class = "label1">Фильтр по приоритету: </label> &nbsp;
 
-        <select name="filter" id="filter">
+        <select name="filter" id="filter" class = "filter">
             <option value="nothing"> </option>
             <option value="any">любой</option> 
             <option value="low">низкий</option>
             <option value="middle">средний</option>
             <option value="high">высокий</option>  
         </select>
-
+        <p>
         <label class = "label2">Фильтр по статусу: </label> &nbsp;
         активные <input type="checkbox" name = "active" value = "активные" id="active">
         отмененные <input type="checkbox" name = "canceled" value = "отмененные" id="canceled">
         завершенные <input type="checkbox" name = "completed" value = "завершенные" id="completed">
+        </p>
 
-        <br>
         <label class = "label3">Сортировка по дате: </label> &nbsp;
-        <select name="sortData" id="sortData">
+        <select name="sortData" id="sortData" class = "sortData">
             <option value="nothing"> </option>
             <option value="up1">дата создания &uarr;</option>
             <option value="down1">дата создания &darr;</option>
         </select>
-
+        <p>
         <label class = "label4">Сортировка по приоритету: </label> &nbsp;
-        <select name="sortPriority" id="sortPriority">
+        <select name="sortPriority" id="sortPriority" class = "sortPriority">
             <option value="nothing"> </option>
             <option value="up2">приоритет &uarr;</option>
             <option value="down2">приоритет &darr;</option>
         </select>
-
-        <br>
+        </p>
         <label class = "label5">Поиск задачи то тексту: </label> &nbsp;
-        <input type="text" id = "input2" placeholder = "Начните вводить текст задачи...">
+        <input type="text" id = "input2" class = "input2" placeholder = "Начните вводить текст задачи...">
         </form>
 
 

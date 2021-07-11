@@ -1,30 +1,59 @@
 body {
-    background-color: #8affb9;
+    background-color: #FFBF40;
     max-width: 720px;
-    margin:3px auto;
-    font: 12pt/20pt sans-serif;
+    margin: 3px auto;
+    font: 10pt "Montserrat Medium";
 }
 
-#upper {
-    background-color: #e0ffad;
-    width:  720px;
-    height: 50px;
-    margin: 10px auto;
-    border: 1px solid #ccc;
-    display: inline-block;
-    display: flex;
-    justify-content: center;
+.main {
+    padding-top: 40px;
+}
+
+/*#upper {*/
+/*    background-color: #e0ffad;*/
+/*    width:  720px;*/
+/*    height: 50px;*/
+/*    margin: 10px auto;*/
+/*    border: 1px solid #ccc;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*}*/
+.toDoList {
+    font: 42pt "Montserrat ExtraBold";
+    color: #009999;
+    padding: 240px;
+}
+.labelPriority {
+    font: 14pt "Montserrat SemiBold";
+    color: #A60000;
+    margin: 100px 60px 0px 0px;
+}
+.priority{
+    font: 12pt "Montserrat Light";
+    border-radius: 9px;
+    /*padding: 8px;*/
+    /*border: 1px solid rgba(0, 0, 0, 0.2);*/
+    /*display: flex;*/
+    /*vertical-align: middle;*/
+    /*align-items: center*/
+}
+.new-task {
+    font: 12pt "Montserrat Medium";
+    border-radius: 9px;
+    margin-top: 20px;
+}
+
+.add {
+    border-radius: 6px;
+    font: 14pt "Montserrat SemiBold";
+    background-color: #FF7373;
+    color: white;
+    margin-right: 10px;
+    padding: 0 20px 0 20px;
 }
 
 .delete {
   cursor:pointer;
-}
-#prioritet {
-  padding: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  display: flex;
-  vertical-align: middle;
-  align-items: center
 }
 
 .tasks {
@@ -32,10 +61,46 @@ body {
   padding: 10px;
   background-color: white;
 }
+
+.middle {
+    background-color:#5CCCCC;
+    width: 100%;
+    height: 200px;
+    margin: 30px auto;
+    border: 5px solid #ccc;
+    display: inline-block;
+    font: 12pt "Montserrat Medium";
+    color:	#A60000;
+}
+
+.filter {
+    font: 12pt "Montserrat Light";
+    border-radius: 9px;
+    padding: 0 20px 0 20px;
+}
+
+.sortData {
+    font: 12pt "Montserrat Light";
+    border-radius: 9px;
+    padding: 0 20px 0 20px;
+}
+
+.sortPriority {
+    font: 12pt "Montserrat Light";
+    border-radius: 9px;
+    padding: 0 20px 0 20px;
+}
+
+.input2 {
+    font: 12pt "Montserrat Medium";
+    border-radius: 9px;
+    margin-top: 20px;
+}
+
 .tasks-finish {
   margin: 0 auto;
   padding: 10px;
-  background-color: #ADFF2F
+  background-color: #ADFF2F;
 }
 .tasks-cancel {
     margin: 0 auto;
@@ -56,17 +121,9 @@ body {
   align-items: center
 }
 
-#middle {
-    background-color: #a5b3d6;
-    width: 100%;
-    height: 325px;
-    margin: 30px auto;
-    border: 1px solid #ccc;
-    display: inline-block;
-}
 
 .lower{
-    background-color:  #d2c7d6;
+    background-color:#FF7373;
     width: 100%;
     height: 300px;
     margin: 10px auto;
@@ -81,14 +138,17 @@ body {
 
 .fin-tasks {
     height: 60px;
+    font: 14pt "Montserrat Medium";
 }
 
 .unf-tasks {
     height: 120px;
+    font: 12pt "Montserrat Medium";
 }
 
 .cancel-tasks {
     height: 60px;
+    font: 14pt "Montserrat Medium";
 }
 
 
