@@ -43,12 +43,13 @@ function addTask() {
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(toDo)
-    }).then((resp) => resp.json()).then(async (data) => {
+    }).then((resp) => resp.json())
+        .then(async (data) => {
         toDoArr.push(data);
         set(toDoArr, "tasks", unfinishedTasks);
-        console.log(2)
+    }).catch (error => {
+        alert (error);
     })
-    console.log(3)
 
 }
 
@@ -84,7 +85,6 @@ function set(arr, areaClass, taskTypeBlock) {
         taskTypeBlock.innerHTML = displayTask;
 
     })
-    console.log(4)
 }
 
 function Add () {
@@ -97,21 +97,26 @@ function deleteTask(item, arr) { //todo кнопка удаления задач
     let check = confirm ("Вы действительно хотите удалить задачу?");
     if (check){
         const deleteIndex = arr.findIndex((toDo) => toDo.id === +item.id);
-        arr.splice(deleteIndex,1);
+        // arr.splice(deleteIndex,1);
         let li = document.getElementById(item.id)
         li.remove();
 
-        // fetch('http://127.0.0.1:3000/items', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json;charset=utf-8'
-        //     },
-        //     // body: JSON.stringify(toDoArr)
-        // }).then((resp) => resp.json()).then(() => {
-        //     toDoArr.splice(deleteIndex, 1);
-        //     console.log(5)
+        fetch('http://127.0.0.1:3000/items', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // body: JSON.stringify({
+            //     id: deleteIndex
+            // })
+        }).then((resp) => resp.json())
+            .then (async deleteIndex => arr.splice(deleteIndex,1))
+            .catch (error => {
+                alert (error);
+            })
+        //     .then( async (data) => {
+        //     toDoArr.splice(data, 1);
         // })
-
     }
 }
 
