@@ -18,10 +18,10 @@ fetch('http://127.0.0.1:3000/items')
     .then(result => {
         toDoArr = result;
         set(toDoArr, "tasks", unfinishedTasks)})
-    .then (data => {
-        toDoArrFinish = data;
-        set (toDoArrFinish, "tasks-finish", finishedTasks);
-        });
+    // .then (data => {
+    //     toDoArrFinish = data;
+    //     set (toDoArrFinish, "tasks-finish", finishedTasks);
+    //     });
 
 
 function addTask() {
@@ -98,22 +98,27 @@ function deleteTask(item, arr) { //todo кнопка удаления задач
     if (check){
         const deleteIndex = arr.findIndex((toDo) => toDo.id === +item.id);
         // arr.splice(deleteIndex,1);
-        let li = document.getElementById(item.id)
-        li.remove();
+        // let li = document.getElementById(item.id)
+        // li.remove();
 
-        fetch('http://127.0.0.1:3000/items', {
+        return fetch('http://127.0.0.1:3000/items', {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json;charset=utf-8'
             },
             // body: JSON.stringify({
             //     id: deleteIndex
             // })
         }).then((resp) => resp.json())
-            .then (async deleteIndex => arr.splice(deleteIndex,1))
-            .catch (error => {
-                alert (error);
-            })
+
+            // .then (async () => {
+            //     toDoArr.splice(deleteIndex, 1)
+            //     let li = document.getElementById(item.id)
+            //     li.remove()
+            // })
+            // .catch (error => {
+            //     alert (error);
+            // }))
         //     .then( async (data) => {
         //     toDoArr.splice(data, 1);
         // })
