@@ -101,7 +101,7 @@ function deleteTask(item, arr) { //todo кнопка удаления задач
         // let li = document.getElementById(item.id)
         // li.remove();
 
-        return fetch('http://127.0.0.1:3000/items', {
+        return fetch('${http://127.0.0.1:3000/items}/${toDo.id}', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
