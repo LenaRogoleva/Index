@@ -97,31 +97,20 @@ function deleteTask(item, arr) { //todo кнопка удаления задач
     let check = confirm ("Вы действительно хотите удалить задачу?");
     if (check){
         const deleteIndex = arr.findIndex((toDo) => toDo.id === +item.id);
-        // arr.splice(deleteIndex,1);
-        // let li = document.getElementById(item.id)
-        // li.remove();
 
-        return fetch('${http://127.0.0.1:3000/items}/${toDo.id}', {
+        return fetch('http://127.0.0.1:3000/items/id', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            // body: JSON.stringify({
-            //     id: deleteIndex
-            // })
-        }).then((resp) => resp.json())
-
-            // .then (async () => {
-            //     toDoArr.splice(deleteIndex, 1)
-            //     let li = document.getElementById(item.id)
-            //     li.remove()
-            // })
-            // .catch (error => {
-            //     alert (error);
-            // }))
-        //     .then( async (data) => {
-        //     toDoArr.splice(data, 1);
-        // })
+        }).then (async () => {
+                toDoArr.splice(deleteIndex, 1)
+                let li = document.getElementById(item.id)
+                li.remove()
+            })
+            .catch (error => {
+                alert (error);
+            })
     }
 }
 
