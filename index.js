@@ -17,11 +17,12 @@ fetch('http://127.0.0.1:3000/items')
     .then(response => response.json())
     .then(result => {
         toDoArr = result;
-        set(toDoArr, "tasks", unfinishedTasks)})
-    // .then (data => {
-    //     toDoArrFinish = data;
-    //     set (toDoArrFinish, "tasks-finish", finishedTasks);
-    //     });
+        set(toDoArr, "tasks", unfinishedTasks)
+    })
+    .then( res =>{
+        toDoArrFinish=res;
+        set (toDoArrFinish, "tasks-finish", finishedTasks)
+        })
 
 
 function addTask() {
@@ -182,8 +183,8 @@ function handleTask(item, currentArr) { //todo вспомогательная ф
     let finishElement = toDoArr.find(toDo => toDo.id === +item.id);
     // currentArr.unshift(finishElement);
     let i = toDoArr.indexOf(finishElement);
-    toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
-    set(toDoArr, "tasks", unfinishedTasks);
+    // toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
+    // set(toDoArr, "tasks", unfinishedTasks);
     if (toDoArr.length ===0){ //если массив пустой
         unfinishedTasks.innerHTML = "";
     }
@@ -193,9 +194,21 @@ function handleTask(item, currentArr) { //todo вспомогательная ф
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(finishElement)
-    }).then((resp) => resp.json()).then((data) => {
-        toDoArrFinish.push(data);
+    })
+        // .then((resp) => resp.json())
+        .then(() => {
+        toDoArrFinish.push(finishElement);
         set(toDoArrFinish, "tasks-finish", finishedTasks);
+    })
+
+    fetch('http://127.0.0.1:3000/items/id', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+    }).then (()=> {
+        toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
+        set(toDoArr, "tasks", unfinishedTasks);
     })
 }
 
