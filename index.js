@@ -17,12 +17,15 @@ fetch('http://127.0.0.1:3000/items')
     .then(response => response.json())
     .then(result => {
         toDoArr = result;
-        set(toDoArr, "tasks", unfinishedTasks)
+        set(toDoArr, "tasks", unfinishedTasks);
     })
-    .then( res =>{
-        toDoArrFinish=res;
-        set (toDoArrFinish, "tasks-finish", finishedTasks)
-        })
+
+fetch('http://127.0.0.1:3000/items')
+    .then(response => response.json())
+    .then(result => {
+        toDoArrFinish = result;
+        set(toDoArrFinish, "tasks-finish", finishedTasks)
+    })
 
 
 function addTask() {
@@ -80,8 +83,8 @@ function set(arr, areaClass, taskTypeBlock) {
         <label>${item.name}</label>
         <label>${item.time}</label>
         <i id="${item.id}" onclick="deleteTask(this, toDoArr)" class ="material-icons delete">delete</i>
-        <i id = "${item.id}" onclick="finishTask(this)" class ="material-icons">checked</i>
-        <i id = "${item.id}" onclick="cancelTask(this)" class ="material-icons">close</i>
+        <i id = "${item.id}" onclick="handleTask(this, toDoArrFinish)" class ="material-icons">checked</i>
+        <i id = "${item.id}" onclick="cancelTask(this, toDoArrCancel)" class ="material-icons">close</i>
         </li>`;
         taskTypeBlock.innerHTML = displayTask;
 
@@ -182,12 +185,11 @@ document.querySelector('#filter').onchange = function FilterPriority() { //todo 
 function handleTask(item, currentArr) { //todo вспомогательная функция для отмененных/завершенных дел
     let finishElement = toDoArr.find(toDo => toDo.id === +item.id);
     // currentArr.unshift(finishElement);
-    let i = toDoArr.indexOf(finishElement);
+    // let i = toDoArr.indexOf(finishElement);
     // toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
     // set(toDoArr, "tasks", unfinishedTasks);
-    if (toDoArr.length ===0){ //если массив пустой
-        unfinishedTasks.innerHTML = "";
-    }
+    // if (toDoArr.length === 0) { //если массив пустой
+    //     unfinishedTasks.innerHTML = "";
     fetch('http://127.0.0.1:3000/items', {
         method: 'POST',
         headers: {
@@ -195,22 +197,29 @@ function handleTask(item, currentArr) { //todo вспомогательная ф
         },
         body: JSON.stringify(finishElement)
     })
-        // .then((resp) => resp.json())
-        .then(() => {
-        toDoArrFinish.push(finishElement);
-        set(toDoArrFinish, "tasks-finish", finishedTasks);
-    })
+        .then((resp) => resp.json())
+        .then(async (data) => {
+            currentArr.push(data);
+            set(toDoArrFinish,"tasks-finish", finishedTasks);
+            set(toDoArrCancel, "tasks-cancel", cancelTasks);
 
+        })
+        .catch (error => {
+        alert (error);
+    })
     fetch('http://127.0.0.1:3000/items/id', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
         },
     }).then (()=> {
-        toDoArr.splice(i, 1); //удаление элемента finishElement из массива toDoArr
+        toDoArr.splice(toDoArr.indexOf(finishElement), 1); //удаление элемента finishElement из массива toDoArr
         set(toDoArr, "tasks", unfinishedTasks);
     })
-}
+    }
+
+
+
 
 // function finishOrCancelTask(item, arr, element, area){ //todo завершенные или отмененные дела
 //     let displayTask = '';
@@ -226,11 +235,11 @@ function handleTask(item, currentArr) { //todo вспомогательная ф
 //     });
 // }
 
-function finishTask(item) { //todo завершенные дела
-    handleTask(item, toDoArrFinish);
-    // finishOrCancelTask(item, toDoArrFinish, "tasks-finish", finishedTasks) ;
-
-}
+// function finishTask(item) { //todo завершенные дела
+//     handleTask(item, toDoArrFinish);
+//     finishOrCancelTask(item, toDoArrFinish, "tasks-finish", finishedTasks) ;
+//
+// }
 
 function cancelTask (item){ //todo отмененные дела
     handleTask(item, toDoArrCancel);
