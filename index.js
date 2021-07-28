@@ -20,12 +20,12 @@ fetch('http://127.0.0.1:3000/items')
         set(toDoArr, "tasks", unfinishedTasks);
     })
 
-fetch('http://127.0.0.1:3000/items')
-    .then(response => response.json())
-    .then(result => {
-        toDoArrFinish = result;
-        set(toDoArrFinish, "tasks-finish", finishedTasks)
-    })
+// fetch('http://127.0.0.1:3000/items')
+//     .then(response => response.json())
+//     .then(result => {
+//         toDoArrFinish = result;
+//         set(toDoArrFinish, "tasks-finish", finishedTasks)
+//     })
 
 
 function addTask() {
@@ -289,6 +289,15 @@ document.querySelector('#completed').onchange = function completedStatus(event) 
 
 document.querySelector('#unfinished-tasks').onclick = function editTask (){ //todo редактирование текста
     unfinishedTasks.setAttribute("contenteditable", "true");
+        fetch ('http://127.0.0.1:3000/items/id', {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            },
+            body: JSON.stringify(toDo)
+        })
+            .then((resp) => resp.json())
+
 }
 
 
