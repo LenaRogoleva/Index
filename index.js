@@ -80,7 +80,7 @@ function set(arr, areaClass, taskTypeBlock) {
     arr.forEach(item => { //выводим элементы
         const prior = swap(item);
         displayTask += `<li id ="${item.id}" class="${areaClass}">${prior}
-        <label>${item.name}</label>
+        <td>${item.name}</td>
         <label>${item.time}</label>
         <i id="${item.id}" onclick="deleteTask(this, toDoArr)" class ="material-icons delete">delete</i>
         <i id = "${item.id}" onclick="handleTask(this, toDoArrFinish)" class ="material-icons">checked</i>
@@ -287,18 +287,28 @@ document.querySelector('#completed').onchange = function completedStatus(event) 
 
 
 
-document.querySelector('#unfinished-tasks').onclick = function editTask (){ //todo редактирование текста
-    unfinishedTasks.setAttribute("contenteditable", "true");
-        fetch ('http://127.0.0.1:3000/items/id', {
-            method: 'PUT',
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8'
-            },
-            body: JSON.stringify(toDo)
-        })
-            .then((resp) => resp.json())
+// document.querySelector('#unfinished-tasks').onclick = function editTask (){ //todo редактирование текста
+   let tds = document.querySelector('li');
 
-}
+    for (let i=0; i<tds.length;i++) {
+        tds[i].addEventListener('click', function(){
+            let input = document.createElement('input');
+            input.value = this.innerHTML;
+            this.innerHTML='';
+            this.appendChild(input);
+        })
+    }
+    // unfinishedTasks.setAttribute("contenteditable", "true");
+    //     fetch ('http://127.0.0.1:3000/items/id', {
+    //         method: 'PUT',
+    //         headers: {
+    //             'Content-type': 'application/json; charset=UTF-8'
+    //         },
+    //         body: JSON.stringify(toDo)
+    //     })
+    //         .then((resp) => resp.json())
+
+//}
 
 
 
