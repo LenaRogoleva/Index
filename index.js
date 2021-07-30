@@ -85,6 +85,7 @@ function set(arr, areaClass, taskTypeBlock) {
         <i id="${item.id}" onclick="deleteTask(this, toDoArr)" class ="material-icons delete">delete</i>
         <i id = "${item.id}" onclick="handleTask(this, toDoArrFinish)" class ="material-icons">checked</i>
         <i id = "${item.id}" onclick="cancelTask(this, toDoArrCancel)" class ="material-icons">close</i>
+        <i id = "${item.id}" onclick="saveEditTask()" class ="material-icons">save</i>
         </li>`;
         taskTypeBlock.innerHTML = displayTask;
 
@@ -287,28 +288,47 @@ document.querySelector('#completed').onchange = function completedStatus(event) 
 
 
 
-// document.querySelector('#unfinished-tasks').onclick = function editTask (){ //todo редактирование текста
-   let tds = document.querySelector('li');
+document.querySelector('#unfinished-tasks').onclick = function editTask () { //todo редактирование текста
+// function editTask() {
+//     console.log(1)
+//     let tds = document.querySelectorAll('li');
+//
+//     for (let i = 0; i < tds.length; i++) {
+//         tds[i].addEventListener('click', function () {
+//             let input = document.createElement('input');
+//             input.value = this.innerHTML;
+//             this.innerHTML = '';
+//             this.appendChild(input);
+//         })
+//     }
+// }
+    unfinishedTasks.setAttribute("contenteditable", "true");
+}
 
-    for (let i=0; i<tds.length;i++) {
-        tds[i].addEventListener('click', function(){
-            let input = document.createElement('input');
-            input.value = this.innerHTML;
-            this.innerHTML='';
-            this.appendChild(input);
+    function saveEditTask(){
+        let task = document.querySelector('td').innerHTML
+        console.log(task)
+        fetch ('http://127.0.0.1:3000/items/id', {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            },
+            // body: JSON.stringify()
         })
+            .then ((resp) => resp.json)
+            .then (resB => console.log(resB))
+            // .then ((data) => {
+            //     if (data === 'ok') {
+            //         // в случае успеха, выводим информацию об этом
+            //         alert('Изменения успешно сохранены');
+            //     } else {
+            //         // в случае ошибки, выводим информацию об этом
+            //         alert('Произошла ошибка');
+            //     }
+            // })
     }
-    // unfinishedTasks.setAttribute("contenteditable", "true");
-    //     fetch ('http://127.0.0.1:3000/items/id', {
-    //         method: 'PUT',
-    //         headers: {
-    //             'Content-type': 'application/json; charset=UTF-8'
-    //         },
-    //         body: JSON.stringify(toDo)
-    //     })
-    //         .then((resp) => resp.json())
 
-//}
+
 
 
 
