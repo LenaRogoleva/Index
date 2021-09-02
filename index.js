@@ -40,7 +40,8 @@ function addTask() {
         prior: priority.value,
         time: new Date().toLocaleString(),
         id: ++counter,
-        isVisible: true
+        isVisible: true,
+        status: 'unfinished'| 'finished'| 'canceled'
     };
     // toDoArr.push(toDo);
     fetch('http://127.0.0.1:3000/items', {
@@ -51,6 +52,7 @@ function addTask() {
         body: JSON.stringify(toDo)
     }).then((resp) => resp.json())
         .then(async (data) => {
+        toDo.status = 'unfinished';
         toDoArr.push(data);
         set(toDoArr, "tasks", unfinishedTasks);
     }).catch (error => {
@@ -62,11 +64,11 @@ function addTask() {
 function swap(item) {
 
     if (item.prior === 'short') {
-        prior = '<font color="red">низкий</font>'
+        prior = '<font color= #3399CC>низкий</font>'
     } else if (item.prior === 'middle') {
-        prior = '<font color="blue">средний</font>'
+        prior = '<font color= #00CC66>средний</font>'
     } else {
-        prior = '<font color="orange">высокий</font>'
+        prior = '<font color= #FF9933>высокий</font>'
     }
     return prior
 }
@@ -197,9 +199,17 @@ function handleTask(item, currentArr) { //todo вспомогательная ф
         .then((resp) => resp.json())
         .then(async (data) => {
             currentArr.push(data);
-            set(toDoArrFinish,"tasks-finish", finishedTasks);
-            set(toDoArrCancel, "tasks-cancel", cancelTasks);
-
+            currentArr.forEach( function(toDo){
+                if (toDo.status === 'finished'){ // в какой момент надо присвоить статусу finished или canceled?
+                    set(toDoArrFinish,"tasks-finish", finishedTasks);
+                }
+                if (toDo.status === 'canceled'){
+                    set(toDoArrCancel, "tasks-cancel", cancelTasks);
+                }
+                else {
+                    set (toDoArr, "tasks", unfinishedTasks)
+                }
+            })
         })
         .catch (error => {
         alert (error);
