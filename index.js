@@ -2,6 +2,7 @@ const inputTask = document.getElementById('new-task');
 const unfinishedTasks = document.getElementById('unfinished-tasks');
 const finishedTasks = document.getElementById('finished-tasks');
 const cancelTasks = document.getElementById('canceled-tasks');
+const allTask = document.getElementById('lowerid');
 let toDoArr = [];
 let toDoArrFiltered = [];
 let toDoArrDate = [];
@@ -20,16 +21,18 @@ fetch ('http://127.0.0.1:3000/items')
         result.forEach (function(toDo, i, result){
                 if (toDo.status === 'finished') {
                     toDoArrFinish.unshift(toDo);
-                    toDoArr.splice(toDoArr.indexOf(toDo), 1);
+                    // toDoArr.splice(toDoArr.indexOf(toDo), 1);
                     set(toDoArrFinish, "tasks-finish", finishedTasks);
                 }
-                if (toDo.status === 'canceled') {
+                else if (toDo.status === 'canceled') {
                     toDoArrCancel.unshift(toDo);
-                    toDoArr.splice(toDoArr.indexOf(toDo), 2);
+                    // toDoArr.splice(toDoArr.indexOf(toDo), 2);
                     set(toDoArrCancel, "tasks-cancel", cancelTasks);
-                } else {
+                }
+                else {
                     toDoArr.unshift(toDo);
                     set(toDoArr, "tasks", unfinishedTasks);
+                    console.log(toDo);
                 }
         })
     })
@@ -88,12 +91,14 @@ function set(arr, areaClass, taskTypeBlock) {
     arr.forEach(item => { //выводим элементы
         const prior = swap(item);
         displayTask += `<li id ="${item.id}" class="${areaClass}">${prior}
-        <td>${item.name}</td>
+        <div id = "${item.id + 'div'}" >${item.name}</div>
         <label>${item.time}</label>
-        <i id="${item.id}" onclick="deleteTask(this, toDoArr)" class ="material-icons" class ="delete" >delete</i>
-        <i id = "${item.id}" onclick="handleTask(this, toDoArrFinish, 'finished')" class ="material-icons">checked</i>
-        <i id = "${item.id}" onclick="handleTask(this, toDoArrCancel, 'canceled')" class ="material-icons">close</i>
-        <i id = "${item.id}" onclick="saveEditTask()" class ="material-icons" id="saveMe">save</i>
+        <div class="icons-item">
+        <div onclick="deleteTask(this, toDoArr)" class ="material-icons delete" >delete</div>
+        <div onclick="handleTask(this, toDoArrFinish, 'finished')" class ="material-icons checked">checked</div>
+        <div onclick="handleTask(this, toDoArrCancel, 'canceled')" class ="material-icons close">close</div>
+        <div onclick="saveEditTask(this, ${item.id}, ${item.status})" class ="material-icons save">save</div>
+        </div>
         </li>`;
         taskTypeBlock.innerHTML = displayTask;
 
@@ -212,7 +217,6 @@ function handleTask(item, currentArr, box) { //todo вспомогательна
     })
         .then((resp)=> resp.json())
         .then ( async (data) => {
-            // currentArr.unshift(data);
             toDoArr.splice( toDoArr.indexOf(finishElement),1);
             if (data.status === 'finished'){
                 toDoArrFinish.unshift (finishElement);
@@ -304,18 +308,20 @@ document.querySelector('#completed').onchange = function completedStatus(event) 
 
 
 
-document.querySelector('#unfinished-tasks').onclick = function editTask () { //todo редактирование текста
-    unfinishedTasks.setAttribute("contenteditable", "true");
+document.querySelector('#lowerid').onclick = function editTask () { //todo редактирование текста
+    allTask.setAttribute("contenteditable", "true");
 
-        fetch ('http://127.0.0.1:3000/items/id', {
-            method: 'PUT',
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8'
-            },
-            // body: JSON.stringify()
-        })
-            .then ((resp) => resp.json)
-            .then (resB => console.log(resB))
+
+
+        // fetch ('http://127.0.0.1:3000/items/id', {
+        //     method: 'PUT',
+        //     headers: {
+        //         'Content-type': 'application/json; charset=UTF-8'
+        //     },
+        //     // body: JSON.stringify()
+        // })
+        //     .then ((resp) => resp.json)
+        //     .then (resB => console.log(resB))
             // .then ((data) => {
             //     if (data === 'ok') {
             //         // в случае успеха, выводим информацию об этом
@@ -326,7 +332,48 @@ document.querySelector('#unfinished-tasks').onclick = function editTask () { //t
             //     }
             // })
     }
+function saveEditTask(item, id, status) {
+    console.log(item);
+    console.log(id);
+    console.log(status);
+    switch (status) {
+        case 'finished':
+            console.log(item);
+            console.log(id);
+            console.log(status);
+            let editElement = toDoArrFinish.findIndex(toDo => toDo.id === id);
+            let thisElement = document.getElementById(id + 'div').textContent;
+            toDoArrFinish[editElement].name = thisElement;
+            let element = toDoArrFinish[editElement];
+            break;
 
+        case 'unfinished':
+            editElement = toDoArr.findIndex(toDo => toDo.id === id);
+            thisElement = document.getElementById(id + 'div').textContent;
+            toDoArr[editElement].name = thisElement;
+            element = toDoArr[editElement];
+            break;
+
+        case 'canceled':
+            editElement = toDoArrCancel.findIndex(toDo => toDo.id === id);
+            thisElement = document.getElementById(id + 'div').textContent;
+            toDoArrCancel[editElement].name = thisElement;
+            element = toDoArrCancel[editElement];
+            break;
+    }
+
+    fetch ('http://127.0.0.1:3000/items/' + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(element)
+    })
+        .then((resp)=> resp.json())
+        .then ( async () => {
+            set(toDoArr, "tasks", unfinishedTasks);
+})
+}
 
 
 

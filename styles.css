@@ -137,10 +137,14 @@ body {
     font: 12pt "Montserrat Medium";
 }
 
-.delete {
-    position: absolute;
-    right: 0px;
-    /*left: 200px;*/
-    /*padding: 0 20px 0 20px;*/
+/*.material-icons {*/
+/*    margin: 0 10% 0 90%;*/
+/*}*/
+
+.icons-item{
+    float: right;
 }
 
+.checked {
+    /*margin: -20% 15% 0 85%;*/
+}
