@@ -21,18 +21,15 @@ fetch ('http://127.0.0.1:3000/items')
         result.forEach (function(toDo, i, result){
                 if (toDo.status === 'finished') {
                     toDoArrFinish.unshift(toDo);
-                    // toDoArr.splice(toDoArr.indexOf(toDo), 1);
                     set(toDoArrFinish, "tasks-finish", finishedTasks);
                 }
                 else if (toDo.status === 'canceled') {
                     toDoArrCancel.unshift(toDo);
-                    // toDoArr.splice(toDoArr.indexOf(toDo), 2);
                     set(toDoArrCancel, "tasks-cancel", cancelTasks);
                 }
                 else {
                     toDoArr.unshift(toDo);
                     set(toDoArr, "tasks", unfinishedTasks);
-                    console.log(toDo);
                 }
         })
     })
@@ -49,7 +46,7 @@ function addTask() {
         time: new Date().toLocaleString(),
         id: ++counter,
         isVisible: true,
-        status: 'unfinished'
+        status: 2 // 1 - finished, 2 - unfinished, 3 - canceled
     };
 
     fetch('http://127.0.0.1:3000/items', {
@@ -94,16 +91,17 @@ function set(arr, areaClass, taskTypeBlock) {
         <div id = "${item.id + 'div'}" >${item.name}</div>
         <label>${item.time}</label>
         <div class="icons-item">
-        <div onclick="deleteTask(this, toDoArr)" class ="material-icons delete" >delete</div>
-        <div onclick="handleTask(this, toDoArrFinish, 'finished')" class ="material-icons checked">checked</div>
-        <div onclick="handleTask(this, toDoArrCancel, 'canceled')" class ="material-icons close">close</div>
-        <div onclick="saveEditTask(this, ${item.id}, ${item.status})" class ="material-icons save">save</div>
+        <div onclick="deleteTask(${item.id}, toDoArr)" class ="material-icons delete" >delete</div>
+        <div onclick="handleTask(${item.id}, toDoArrFinish, 1)" class ="material-icons checked">checked</div>
+        <div onclick="handleTask(${item.id}, toDoArrCancel, 3)" class ="material-icons close">close</div>
+        <div onclick="saveEditTask (${item.id}, ${item.status})" class ="material-icons save">save</div>
         </div>
         </li>`;
         taskTypeBlock.innerHTML = displayTask;
 
     })
 }
+// не хочет видеть именно строку, если писать item.isVisible, то все ок.
 
 function Add () {
     addTask();
@@ -114,16 +112,16 @@ function Add () {
 function deleteTask(item, arr) { //todo кнопка удаления задачи
     let check = confirm ("Вы действительно хотите удалить задачу?");
     if (check){
-        const deleteIndex = arr.findIndex((toDo) => toDo.id === +item.id);
+        const deleteIndex = arr.findIndex((toDo) => toDo.id === item);
 
-        return fetch('http://127.0.0.1:3000/items/' + item.id, {
+        return fetch('http://127.0.0.1:3000/items/' + item, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
         }).then (async () => {
                 toDoArr.splice(deleteIndex, 1)
-                let li = document.getElementById(item.id)
+                let li = document.getElementById(item)
                 li.remove()
             })
             .catch (error => {
@@ -198,17 +196,17 @@ document.querySelector('#filter').onchange = function FilterPriority() { //todo 
 
 
 function handleTask(item, currentArr, box) { //todo вспомогательная функция для отмененных/завершенных дел
-    let finishElement = toDoArr.find(toDo => toDo.id === +item.id);
+    let finishElement = toDoArr.find(toDo => toDo.id === item);
     switch (box) {
-        case 'finished':
-            finishElement.status = 'finished';
+        case 1:
+            finishElement.status = 1;
             break;
-        case 'canceled':
-            finishElement.status = 'canceled';
+        case 3:
+            finishElement.status = 3;
             break;
     }
 
-    fetch ('http://127.0.0.1:3000/items/' + item.id, {
+    fetch ('http://127.0.0.1:3000/items/' + item, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
@@ -218,7 +216,7 @@ function handleTask(item, currentArr, box) { //todo вспомогательна
         .then((resp)=> resp.json())
         .then ( async (data) => {
             toDoArr.splice( toDoArr.indexOf(finishElement),1);
-            if (data.status === 'finished'){
+            if (data.status === 1){
                 toDoArrFinish.unshift (finishElement);
                 set(toDoArrFinish,"tasks-finish", finishedTasks);
                 set (toDoArr, "tasks", unfinishedTasks);
@@ -229,40 +227,6 @@ function handleTask(item, currentArr, box) { //todo вспомогательна
                 set (toDoArr, "tasks", unfinishedTasks);
             }
         })
-    // fetch('http://127.0.0.1:3000/items', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json;charset=utf-8'
-    //     },
-    //     body: JSON.stringify(finishElement)
-    // })
-    //     .then((resp) => resp.json())
-    //     .then(async (data) => {
-    //         currentArr.push(data);
-    //         currentArr.forEach( function(toDo){
-    //             if (toDo.status === 'finished'){ // в какой момент надо присвоить статусу finished или canceled?
-    //                 set(toDoArrFinish,"tasks-finish", finishedTasks);
-    //             }
-    //             if (toDo.status === 'canceled'){
-    //                 set(toDoArrCancel, "tasks-cancel", cancelTasks);
-    //             }
-    //             else {
-    //                 set (toDoArr, "tasks", unfinishedTasks)
-    //             }
-    //         })
-    //     })
-    //     .catch (error => {
-    //     alert (error);
-    // })
-    // fetch('http://127.0.0.1:3000/items/id', {
-    //     method: 'DELETE',
-    //     headers: {
-    //         'Content-Type': 'application/json;charset=utf-8'
-    //     },
-    // }).then (()=> {
-    //     toDoArr.splice(toDoArr.indexOf(finishElement), 1); //удаление элемента finishElement из массива toDoArr
-    //     set(toDoArr, "tasks", unfinishedTasks);
-    // })
     }
 
 
@@ -310,7 +274,7 @@ document.querySelector('#completed').onchange = function completedStatus(event) 
 
 document.querySelector('#lowerid').onclick = function editTask () { //todo редактирование текста
     allTask.setAttribute("contenteditable", "true");
-
+}
 
 
         // fetch ('http://127.0.0.1:3000/items/id', {
@@ -322,39 +286,38 @@ document.querySelector('#lowerid').onclick = function editTask () { //todo ре�
         // })
         //     .then ((resp) => resp.json)
         //     .then (resB => console.log(resB))
-            // .then ((data) => {
-            //     if (data === 'ok') {
-            //         // в случае успеха, выводим информацию об этом
-            //         alert('Изменения успешно сохранены');
-            //     } else {
-            //         // в случае ошибки, выводим информацию об этом
-            //         alert('Произошла ошибка');
-            //     }
-            // })
-    }
-function saveEditTask(item, id, status) {
-    console.log(item);
+        //     .then ((data) => {
+        //         if (data === 'ok') {
+        //             // в случае успеха, выводим информацию об этом
+        //             alert('Изменения успешно сохранены');
+        //         } else {
+        //             // в случае ошибки, выводим информацию об этом
+        //             alert('Произошла ошибка');
+        //         }
+        //     })
+
+function saveEditTask(id, status ){
     console.log(id);
     console.log(status);
+    let editElement;
+    let thisElement;
+    let element;
     switch (status) {
-        case 'finished':
-            console.log(item);
-            console.log(id);
-            console.log(status);
-            let editElement = toDoArrFinish.findIndex(toDo => toDo.id === id);
-            let thisElement = document.getElementById(id + 'div').textContent;
+        case 1:
+            editElement = toDoArrFinish.findIndex(toDo => toDo.id === id);
+            thisElement = document.getElementById(id + 'div').textContent;
             toDoArrFinish[editElement].name = thisElement;
-            let element = toDoArrFinish[editElement];
+            element = toDoArrFinish[editElement];
             break;
 
-        case 'unfinished':
+        case 2:
             editElement = toDoArr.findIndex(toDo => toDo.id === id);
             thisElement = document.getElementById(id + 'div').textContent;
             toDoArr[editElement].name = thisElement;
             element = toDoArr[editElement];
             break;
 
-        case 'canceled':
+        case 3:
             editElement = toDoArrCancel.findIndex(toDo => toDo.id === id);
             thisElement = document.getElementById(id + 'div').textContent;
             toDoArrCancel[editElement].name = thisElement;
@@ -370,10 +333,42 @@ function saveEditTask(item, id, status) {
         body: JSON.stringify(element)
     })
         .then((resp)=> resp.json())
-        .then ( async () => {
-            set(toDoArr, "tasks", unfinishedTasks);
+        .then ( async (data) => {
+            if (data.status === 1) {
+                set(toDoArrFinish, "tasks-finish", finishedTasks);
+            }
+            else if (data.status === 2){
+                set (toDoArr, "tasks", unfinishedTasks);
+            }
+            else {
+                set (toDoArrCancel, "tasks-cancel", cancelTasks);
+            }
 })
 }
+
+
+// fetch ('http://127.0.0.1:3000/items/' + item, {
+//     method: 'PUT',
+//     headers: {
+//         'Content-Type': 'application/json;charset=utf-8'
+//     },
+//     body: JSON.stringify(finishElement)
+// })
+//     .then((resp)=> resp.json())
+//     .then ( async (data) => {
+//         toDoArr.splice( toDoArr.indexOf(finishElement),1);
+//         if (data.status === 1){
+//             toDoArrFinish.unshift (finishElement);
+//             set(toDoArrFinish,"tasks-finish", finishedTasks);
+//             set (toDoArr, "tasks", unfinishedTasks);
+//         }
+//         else {
+//             toDoArrCancel.unshift (finishElement);
+//             set(toDoArrCancel, "tasks-cancel", cancelTasks);
+//             set (toDoArr, "tasks", unfinishedTasks);
+//         }
+//     })
+// }
 
 
 
