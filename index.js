@@ -4,12 +4,18 @@ const finishedTasks = document.getElementById('finished-tasks');
 const cancelTasks = document.getElementById('canceled-tasks');
 const allTask = document.getElementById('lowerid');
 let toDoArr = [];
-let toDoArrFiltered = [];
 let toDoArrDate = [];
 let toDoArrPriority = [];
 let toDoArrFilterPriority = [];
 let toDoArrFinish=[];
 let toDoArrCancel =[];
+let toDoArrAll = [];
+let toDoArrFilteredFinish = [];
+let toDoArrFilteredCancel = [];
+let toDoArrFilteredUnfinished = [];
+let toDoArrFilterPriorityFinish = [];
+let toDoArrFilterPriorityUnfinished = [];
+let toDoArrFilterPriorityCancel = [];
 const priority = document.getElementById('priority');
 let counter = 0;
 let prior; //глобальный, так как иначе его не видит функция set
@@ -19,11 +25,11 @@ fetch ('http://127.0.0.1:3000/items')
     .then((resp)=> resp.json())
     .then ( result => {
         result.forEach (function(toDo, i, result){
-                if (toDo.status === 'finished') {
+                if (toDo.status === 1) {
                     toDoArrFinish.unshift(toDo);
                     set(toDoArrFinish, "tasks-finish", finishedTasks);
                 }
-                else if (toDo.status === 'canceled') {
+                else if (toDo.status === 3) {
                     toDoArrCancel.unshift(toDo);
                     set(toDoArrCancel, "tasks-cancel", cancelTasks);
                 }
@@ -131,14 +137,25 @@ function deleteTask(item, arr) { //todo кнопка удаления задач
 }
 
 
-document.querySelector('#input2').oninput = function searchTask() { //todo поиск по тексту
+document.querySelector('#input2').oninput = function searchTask () { //todo поиск по тексту
     let val = this.value.trim(); //получаем значение, которое пользователь вводит внутрь функции, еще обрезаем пробелы у вводимых данных
     for (let i = 0; i < val.length; i++) {
-        toDoArrFiltered = toDoArr.filter((item) => item.name.includes(val));
-        set(toDoArrFiltered, "tasks", unfinishedTasks);
+        toDoArrAll = toDoArr.concat(toDoArrFinish).concat(toDoArrCancel);
+
+        toDoArrFilteredFinish = toDoArrAll.filter((item) => (item.name.includes(val) && item.status === 1));
+        set(toDoArrFilteredFinish, "tasks-finish", finishedTasks);
+
+        toDoArrFilteredUnfinished = toDoArrAll.filter((item) => (item.name.includes(val) && item.status === 2));
+        set(toDoArrFilteredUnfinished, "tasks", unfinishedTasks);
+
+        toDoArrFilteredCancel = toDoArrAll.filter((item) => (item.name.includes(val) && item.status === 3));
+        set(toDoArrFilteredCancel, "tasks-cancel", cancelTasks);
     }
+
     if (!val.length){
         set (toDoArr, "tasks", unfinishedTasks);
+        set(toDoArrFinish, "tasks-finish", finishedTasks);
+        set(toDoArrCancel, "tasks-cancel", cancelTasks);
     }
 }
 
@@ -177,21 +194,38 @@ document.querySelector('#sortPriority').onchange = function sortPriority() { //t
 
 document.querySelector('#filter').onchange = function FilterPriority() { //todo фильтр по приоритету
     let selectedPriority = this.value;
+    toDoArrAll = toDoArr.concat(toDoArrFinish).concat(toDoArrCancel);
     switch (selectedPriority) {
         case 'low':
-            toDoArrFilterPriority = toDoArr.filter(item => item.prior === "short");
+            toDoArrFilterPriority = toDoArrAll.filter(item => item.prior === "short");
             break;
         case 'middle':
-            toDoArrFilterPriority = toDoArr.filter(item => item.prior === "middle");
+            toDoArrFilterPriority = toDoArrAll.filter(item => item.prior === "middle");
             break;
         case 'high':
-            toDoArrFilterPriority = toDoArr.filter(item => item.prior === "high");
+            toDoArrFilterPriority = toDoArrAll.filter(item => item.prior === "high");
             break;
         case 'any':
-            toDoArrFilterPriority = JSON.parse(JSON.stringify(toDoArr));
+            toDoArrFilterPriority = JSON.parse(JSON.stringify(toDoArrAll));
             break;
     }
-    set(toDoArrFilterPriority, "tasks", unfinishedTasks);
+    for (let i = 0; i < toDoArrFilterPriority.length; i++){
+        if (toDoArrFilterPriority[i].status === 1) {
+            toDoArrFilterPriorityFinish.unshift(toDoArrFilterPriority[i]);
+
+        } else if (toDoArrFilterPriority[i].status === 2) {
+            toDoArrFilterPriorityUnfinished.unshift(toDoArrFilterPriority[i]);
+        }
+        else {
+            toDoArrFilterPriorityCancel.unshift(toDoArrFilterPriority[i]);
+        }
+
+    }
+    set(toDoArrFilterPriorityFinish, "tasks-finish", finishedTasks);
+    set(toDoArrFilterPriorityUnfinished, "tasks", unfinishedTasks);
+    set(toDoArrFilterPriorityCancel, "tasks-cancel", cancelTasks);
+    toDoArrFilterPriorityUnfinished = []; toDoArrFilterPriorityCancel = []; toDoArrFilterPriorityFinish = [];
+
 }
 
 
@@ -232,7 +266,7 @@ function handleTask(item, currentArr, box) { //todo вспомогательна
 
 
 const checkBoxes = ["active", "canceled", "completed"]; //todo для фильтра по статусу
-const activeCheckBoxes = [];
+let activeCheckBoxes = [];
 const statusArea = {
     active: unfinishedTasks,
     completed: finishedTasks,
@@ -249,14 +283,16 @@ function filStatus(event, checkBoxName, arr, areaClass, area) { //todo вспо�
                 set(arr, areaClass, area);
             }
         })
-    } else {
-        if (!activeCheckBoxes.length) {
-            set(toDoArr, "tasks", unfinishedTasks);
-            set(toDoArrCancel, "tasks-cancel", cancelTasks);
-            set(toDoArrFinish, "tasks-finish", finishedTasks);
-        } else {
+        }  else if (activeCheckBoxes.length){
             area.innerHTML = "";
-        }
+            for ( let i = 0; i < activeCheckBoxes.length; i++) { //чтобы когда все кнопки отжаты, показывались все задачи
+                activeCheckBoxes.splice(activeCheckBoxes.findIndex(item => item === checkBoxName), 1);
+            }
+
+        }  else if (!activeCheckBoxes.length) {
+        set(toDoArr, "tasks", unfinishedTasks);
+        set(toDoArrCancel, "tasks-cancel", cancelTasks);
+        set(toDoArrFinish, "tasks-finish", finishedTasks);
     }
 }
 
@@ -276,29 +312,7 @@ document.querySelector('#lowerid').onclick = function editTask () { //todo ре�
     allTask.setAttribute("contenteditable", "true");
 }
 
-
-        // fetch ('http://127.0.0.1:3000/items/id', {
-        //     method: 'PUT',
-        //     headers: {
-        //         'Content-type': 'application/json; charset=UTF-8'
-        //     },
-        //     // body: JSON.stringify()
-        // })
-        //     .then ((resp) => resp.json)
-        //     .then (resB => console.log(resB))
-        //     .then ((data) => {
-        //         if (data === 'ok') {
-        //             // в случае успеха, выводим информацию об этом
-        //             alert('Изменения успешно сохранены');
-        //         } else {
-        //             // в случае ошибки, выводим информацию об этом
-        //             alert('Произошла ошибка');
-        //         }
-        //     })
-
 function saveEditTask(id, status ){
-    console.log(id);
-    console.log(status);
     let editElement;
     let thisElement;
     let element;
@@ -345,30 +359,6 @@ function saveEditTask(id, status ){
             }
 })
 }
-
-
-// fetch ('http://127.0.0.1:3000/items/' + item, {
-//     method: 'PUT',
-//     headers: {
-//         'Content-Type': 'application/json;charset=utf-8'
-//     },
-//     body: JSON.stringify(finishElement)
-// })
-//     .then((resp)=> resp.json())
-//     .then ( async (data) => {
-//         toDoArr.splice( toDoArr.indexOf(finishElement),1);
-//         if (data.status === 1){
-//             toDoArrFinish.unshift (finishElement);
-//             set(toDoArrFinish,"tasks-finish", finishedTasks);
-//             set (toDoArr, "tasks", unfinishedTasks);
-//         }
-//         else {
-//             toDoArrCancel.unshift (finishElement);
-//             set(toDoArrCancel, "tasks-cancel", cancelTasks);
-//             set (toDoArr, "tasks", unfinishedTasks);
-//         }
-//     })
-// }
 
 
 
