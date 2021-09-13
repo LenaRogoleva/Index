@@ -137,14 +137,14 @@ body {
     font: 12pt "Montserrat Medium";
 }
 
-/*.material-icons {*/
-/*    margin: 0 10% 0 90%;*/
-/*}*/
-
 .icons-item{
     float: right;
 }
 
 .checked {
     /*margin: -20% 15% 0 85%;*/
+}
+
+[contenteditable] {
+    outline: 0px solid transparent;
 }
